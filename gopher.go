@@ -1,46 +1,44 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/logantwalker/gopher-chess/board"
+)
 
 func main(){
-	board := make([]int8, 128)
+	boardArr := make([]int8, 128)
 
-	// Set the starting position of the pieces
-	board[0x00] = 'R'
-	board[0x01] = 'N'
-	board[0x02] = 'B'
-	board[0x03] = 'Q'
-	board[0x04] = 'K'
-	board[0x05] = 'B'
-	board[0x06] = 'N'
-	board[0x07] = 'R'
+	boardArr[0x00] = board.WhiteRook
+	boardArr[0x01] = board.WhiteKnight
+	boardArr[0x02] = board.WhiteBishop
+	boardArr[0x03] = board.WhiteQueen
+	boardArr[0x04] = board.WhiteKing
+	boardArr[0x05] = board.WhiteBishop
+	boardArr[0x06] = board.WhiteKnight
+	boardArr[0x07] = board.WhiteRook
 
 	for i := 0x10; i < 0x18; i++ {
-		board[i] = 'P'
+		boardArr[i] = board.WhitePawn
 	}
 
-	board[0x70] = 'r'
-	board[0x71] = 'n'
-	board[0x72] = 'b'
-	board[0x73] = 'q'
-	board[0x74] = 'k'
-	board[0x75] = 'b'
-	board[0x76] = 'n'
-	board[0x77] = 'r'
+	boardArr[0x70] = board.BlackRook
+	boardArr[0x71] = board.BlackKnight
+	boardArr[0x72] = board.BlackBishop
+	boardArr[0x73] = board.BlackQueen
+	boardArr[0x74] = board.BlackKing
+	boardArr[0x75] = board.BlackBishop
+	boardArr[0x76] = board.BlackKnight
+	boardArr[0x77] = board.BlackRook
 
 	for i := 0x60; i < 0x68; i++ {
-		board[i] = 'p'
+		boardArr[i] = board.BlackPawn
 	}
 
-	// Print out the board
 	for i := 0x70; i >= 0x00; i -= 0x10 {
 		for j := 0; j < 8; j++ {
 			square := i + j
-			if board[square] == 0 {
-				fmt.Printf(". ")
-			} else {
-				fmt.Printf("%c ", board[square])
-			}
+			fmt.Printf("%v ", board.GetPieceSymbol(boardArr[square]))
 		}
 		fmt.Printf("\n")
 	}

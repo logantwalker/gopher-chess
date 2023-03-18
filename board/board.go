@@ -29,31 +29,31 @@ func ParseFen(fen string) (Board, error) {
 
 		switch piece {
 		case 'p':
-			board.State[hexBoard[i]] = BlackPawn
+			board.State[HexBoard[i]] = BlackPawn
 		case 'r':
-			board.State[hexBoard[i]] = BlackRook
+			board.State[HexBoard[i]] = BlackRook
 		case 'n':
-			board.State[hexBoard[i]] = BlackKnight
+			board.State[HexBoard[i]] = BlackKnight
 		case 'b':
-			board.State[hexBoard[i]] = BlackBishop
+			board.State[HexBoard[i]] = BlackBishop
 		case 'q':
-			board.State[hexBoard[i]] = BlackQueen
+			board.State[HexBoard[i]] = BlackQueen
 		case 'k':
-			board.State[hexBoard[i]] = BlackKing
+			board.State[HexBoard[i]] = BlackKing
 
 
 		case 'P':
-			board.State[hexBoard[i]] = WhitePawn
+			board.State[HexBoard[i]] = WhitePawn
 		case 'R':
-			board.State[hexBoard[i]] = WhiteRook
+			board.State[HexBoard[i]] = WhiteRook
 		case 'N':
-			board.State[hexBoard[i]] = WhiteKnight
+			board.State[HexBoard[i]] = WhiteKnight
 		case 'B':
-			board.State[hexBoard[i]] = WhiteBishop
+			board.State[HexBoard[i]] = WhiteBishop
 		case 'Q':
-			board.State[hexBoard[i]] = WhiteQueen
+			board.State[HexBoard[i]] = WhiteQueen
 		case 'K':
-			board.State[hexBoard[i]] = WhiteKing
+			board.State[HexBoard[i]] = WhiteKing
 
 
 		case '1':
@@ -93,4 +93,8 @@ func ParseFen(fen string) (Board, error) {
 	
 
 	return board, nil
+}
+
+func LegalSquare(square int8) bool {
+	return !(uint8(square)&0x88 != 0)
 }

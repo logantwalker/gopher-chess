@@ -71,7 +71,7 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 					move := createMove(origin,dest)
 					moves = append(moves, move)
 				}
-			}else if delta == 2*moveUp{
+			}else if delta == 2*moveDown{
 				if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
 					move := createMove(origin,dest)
 					moves = append(moves, move)

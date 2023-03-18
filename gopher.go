@@ -20,5 +20,10 @@ func main(){
 
 	moves := moves.GenerateMovesList(boardObj)
 
-	fmt.Println(moves)
+	for _, move := range moves {
+		pieceSymbol := board.GetPieceSymbol(move.MovedPiece)
+		moveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
+
+		fmt.Println(pieceSymbol + " " + moveString)
+	}
 }

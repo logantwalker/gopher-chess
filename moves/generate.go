@@ -1,8 +1,6 @@
 package moves
 
 import (
-	"fmt"
-
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -21,6 +19,14 @@ func GenerateMovesList(b board.Board) []Move {
 			if b.Turn == board.Black{
 				availableMoves = generatePawnMoves(b, hex)
 			}
+		case board.WhiteKnight:
+			if b.Turn == board.White{
+				availableMoves = generateKnightMoves(b, hex)
+			}
+		case board.BlackKnight:
+			if b.Turn == board.Black{
+				availableMoves = generateKnightMoves(b, hex)
+			}
 		}
 		moves = append(moves, availableMoves...)
 	}
@@ -37,21 +43,25 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 
 				if delta == moveUpandLeft && validateAttacks[0]{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.WhitePawn
 					moves = append(moves, move)
 				}
 
 				if delta == moveUpandRight && validateAttacks[1]{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.WhitePawn
 					moves = append(moves, move)
 				}
 			}else if delta == 2*moveUp{
 				if rank:= board.Rank(origin); rank == whitePawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveDown] == board.Empty{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.WhitePawn
 					moves = append(moves, move)
 				}
 			}else{
 				if b.State[dest] == board.Empty{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.WhitePawn
 					moves = append(moves, move)
 				}
 			}
@@ -64,21 +74,25 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 
 				if delta == moveDownandLeft && validateAttacks[0]{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.BlackPawn
 					moves = append(moves, move)
 				}
 
 				if delta == moveDownandRight && validateAttacks[1]{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.BlackPawn
 					moves = append(moves, move)
 				}
 			}else if delta == 2*moveDown{
 				if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.BlackPawn
 					moves = append(moves, move)
 				}
 			}else{
 				if b.State[dest] == board.Empty{
 					move := createMove(origin,dest)
+					move.MovedPiece = board.BlackPawn
 					moves = append(moves, move)
 				}
 			}
@@ -88,11 +102,30 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
+func generateKnightMoves(b board.Board, origin int8) []Move {
+	var moves []Move
+
+	for _, delta := range knightMoves{
+		dest := origin + delta
+		if board.LegalSquare(dest) && b.State[dest] <=0 && b.Turn == board.White{
+			move := createMove(origin, dest)
+			move.MovedPiece = board.WhiteKnight
+			moves = append(moves, move)
+		}else if board.LegalSquare(dest) && b.State[dest] >=0 && b.Turn == board.Black{
+			move := createMove(origin, dest)
+			move.MovedPiece = board.BlackKnight
+			moves = append(moves, move)
+		}
+		
+	}
+
+	return moves
+}
+
 func createMove(origin int8, dest int8) Move {
 	var move Move
 
 	if board.LegalSquare(dest){
-		fmt.Println(board.SquareHexToString[board.Square(dest)])
 		move = Move{From: board.Square(origin), To: board.Square(dest)}
 	}
 	

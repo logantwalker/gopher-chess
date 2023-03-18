@@ -22,8 +22,11 @@ var (
 	queenMoves = []int8{moveUp, moveDown, moveLeft, moveRight, moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
 	kingMoves = []int8{moveUp, moveDown, moveLeft, moveRight, moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
 
-	whitePawnMoves = []int8{moveUp, moveUpandLeft, moveUpandRight}
-	blackPawnMoves = []int8{moveDown, moveDownandLeft, moveDownandRight}
+	whitePawnMoves = []int8{moveUp, 2*moveUp, moveUpandLeft, moveUpandRight,}
+	blackPawnMoves = []int8{moveDown, 2*moveDown, moveDownandLeft, moveDownandRight,}
+
+	whitePawnStartRank int8 = 1 // rank 2
+	blackPawnStartRank int8 = 6 // rank 7
 )
 
 type Move struct{

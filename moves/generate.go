@@ -32,6 +32,7 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 	if b.Turn == board.White{
 		for _, delta := range whitePawnMoves{
 			dest := origin + delta
+			
 			if delta == moveUpandLeft || delta == moveUpandRight{
 				validateAttacks := checkPawnAttacks(b, origin)
 
@@ -41,6 +42,11 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 				}
 
 				if delta == moveUpandRight && validateAttacks[1]{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
+			}else if delta == 2*moveUp{
+				if rank:= board.Rank(origin); rank == whitePawnStartRank{
 					move := createMove(origin,dest)
 					moves = append(moves, move)
 				}
@@ -81,7 +87,12 @@ func checkPawnAttacks(b board.Board, origin int8) []bool{
 			attacks[1] = true
 		}
 	}else{
-
+		if b.State[origin + moveDownandLeft] > int8(0) {
+			attacks[0] = true
+		}
+		if b.State[origin + moveDownandRight] > int8(0) {
+			attacks[1] = true
+		}
 	}
 
 	return attacks

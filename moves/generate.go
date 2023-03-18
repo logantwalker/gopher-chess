@@ -33,6 +33,10 @@ func GenerateMovesList(b board.Board) []Move {
 			if b.Turn == board.White{
 				availableMoves = generateKingMoves(b, hex)
 			}
+		case board.BlackKing:
+			if b.Turn == board.Black{
+				availableMoves = generateKingMoves(b, hex)
+			}
 		}
 		moves = append(moves, availableMoves...)
 	}
@@ -154,6 +158,28 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 					moves = append(moves, move)
 				}
 			}
+		}else{
+			if delta == 2*moveRight || delta == 2*moveLeft {
+				canCastle := checkCastlingAvailability(b)
+				if canCastle[0] && delta == 2*moveRight{
+					move := createMove(origin, dest)
+					move.MovedPiece = board.WhiteKing
+					move.Castling = int8(blackKingSideCastlingSquares[1])
+					moves = append(moves, move)
+				}
+				if canCastle[1] && delta == 2*moveLeft{
+					move := createMove(origin, dest)
+					move.MovedPiece = board.BlackKing
+					move.Castling = int8(blackQueenSideCastlingSquares[1])
+					moves = append(moves, move)
+				}
+			}else{
+				if board.LegalSquare(dest) && b.State[dest] >= 0{
+					move := createMove(origin, dest)
+					move.MovedPiece = board.BlackKing
+					moves = append(moves, move)
+				}
+			}
 		}
 	}
 
@@ -200,7 +226,19 @@ func checkCastlingAvailability(b board.Board) []bool {
 			castleAbility[1] = true
 		}
 	}else{
+		if strings.Contains(b.CastlingRights,"k") {
+			castleRights[0] = true
+		}
+		if strings.Contains(b.CastlingRights, "q"){
+			castleRights[1] = true
+		}
 
+		if castleRights[0] && b.State[blackKingSideCastlingSquares[0]] == board.Empty && b.State[blackKingSideCastlingSquares[1]] == board.Empty{
+			castleAbility[0] = true
+		}
+		if castleRights[1] && b.State[blackQueenSideCastlingSquares[0]] == board.Empty && b.State[blackQueenSideCastlingSquares[1]] == board.Empty && b.State[blackQueenSideCastlingSquares[2]] == board.Empty{
+			castleAbility[1] = true
+		}
 	}
 
 	return []bool{castleRights[0] && castleAbility[0],castleRights[1] && castleAbility[1],}

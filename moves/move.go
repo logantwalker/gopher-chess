@@ -32,7 +32,7 @@ var (
 	whiteQueenSideCastlingSquares []board.Square = []board.Square{board.B1, board.C1, board.D1}
 
 	blackKingSideCastlingSquares []board.Square = []board.Square{board.F8,board.G8}
-	blackQueenSideCastingSquares []board.Square = []board.Square{board.B8, board.C8, board.D8}
+	blackQueenSideCastlingSquares []board.Square = []board.Square{board.B8, board.C8, board.D8}
 )
 
 type Move struct{

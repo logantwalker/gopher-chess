@@ -12,6 +12,7 @@ type Board struct {
 	// history 		[]MoveRecord
 	State 			[]int8
 	Turn 			int8
+	CastlingRights 	string
 	HalfMoveClock 	int
 	FullMoves		int
 }

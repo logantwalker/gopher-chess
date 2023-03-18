@@ -32,7 +32,6 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 	if b.Turn == board.White{
 		for _, delta := range whitePawnMoves{
 			dest := origin + delta
-			
 			if delta == moveUpandLeft || delta == moveUpandRight{
 				validateAttacks := checkPawnAttacks(b, origin)
 
@@ -46,22 +45,43 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 					moves = append(moves, move)
 				}
 			}else if delta == 2*moveUp{
-				if rank:= board.Rank(origin); rank == whitePawnStartRank{
+				if rank:= board.Rank(origin); rank == whitePawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveDown] == board.Empty{
 					move := createMove(origin,dest)
 					moves = append(moves, move)
 				}
 			}else{
-				move := createMove(origin,dest)
-				moves = append(moves, move)
+				if b.State[dest] == board.Empty{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
 			}
-			
-			
 		}
 	}else{
 		for _, delta := range blackPawnMoves{
 			dest := origin + delta
-			move := createMove(origin,dest)
-			moves = append(moves, move)
+			if delta == moveDownandLeft || delta == moveDownandRight{
+				validateAttacks := checkPawnAttacks(b, origin)
+
+				if delta == moveDownandLeft && validateAttacks[0]{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
+
+				if delta == moveDownandRight && validateAttacks[1]{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
+			}else if delta == 2*moveUp{
+				if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
+			}else{
+				if b.State[dest] == board.Empty{
+					move := createMove(origin,dest)
+					moves = append(moves, move)
+				}
+			}
 		}
 	}
 
@@ -69,10 +89,13 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 }
 
 func createMove(origin int8, dest int8) Move {
+	var move Move
+
 	if board.LegalSquare(dest){
 		fmt.Println(board.SquareHexToString[board.Square(dest)])
+		move = Move{From: board.Square(origin), To: board.Square(dest)}
 	}
-	move := Move{From: board.Square(origin), To: board.Square(dest)}
+	
 
 	return move
 }
@@ -97,5 +120,4 @@ func checkPawnAttacks(b board.Board, origin int8) []bool{
 
 	return attacks
 }
-
 

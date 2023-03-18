@@ -1,20 +1,26 @@
 package board
 
 import (
+	"errors"
 	"strings"
 )
 
 const StartingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
+
 type Board struct {
-	state 			[]int8
-	turn 			int8
-	halfMoveClock 	int
-	fullMoves		int
+	// history 		[]MoveRecord
+	State 			[]int8
+	Turn 			int8
+	HalfMoveClock 	int
+	FullMoves		int
 }
 
-func ParseFen(fen string) []int8 {
+func ParseFen(fen string) (Board, error) {
 	boardArr := make([]int8, 128)
+	var board Board = Board{
+		State: boardArr,
+	}
 	fenArray := strings.Split(fen, " ")
 
 	i := 0
@@ -23,31 +29,31 @@ func ParseFen(fen string) []int8 {
 
 		switch piece {
 		case 'p':
-			boardArr[hexBoard[i]] = BlackPawn
+			board.State[hexBoard[i]] = BlackPawn
 		case 'r':
-			boardArr[hexBoard[i]] = BlackRook
+			board.State[hexBoard[i]] = BlackRook
 		case 'n':
-			boardArr[hexBoard[i]] = BlackKnight
+			board.State[hexBoard[i]] = BlackKnight
 		case 'b':
-			boardArr[hexBoard[i]] = BlackBishop
+			board.State[hexBoard[i]] = BlackBishop
 		case 'q':
-			boardArr[hexBoard[i]] = BlackQueen
+			board.State[hexBoard[i]] = BlackQueen
 		case 'k':
-			boardArr[hexBoard[i]] = BlackKing
+			board.State[hexBoard[i]] = BlackKing
 
 
 		case 'P':
-			boardArr[hexBoard[i]] = WhitePawn
+			board.State[hexBoard[i]] = WhitePawn
 		case 'R':
-			boardArr[hexBoard[i]] = WhiteRook
+			board.State[hexBoard[i]] = WhiteRook
 		case 'N':
-			boardArr[hexBoard[i]] = WhiteKnight
+			board.State[hexBoard[i]] = WhiteKnight
 		case 'B':
-			boardArr[hexBoard[i]] = WhiteBishop
+			board.State[hexBoard[i]] = WhiteBishop
 		case 'Q':
-			boardArr[hexBoard[i]] = WhiteQueen
+			board.State[hexBoard[i]] = WhiteQueen
 		case 'K':
-			boardArr[hexBoard[i]] = WhiteKing
+			board.State[hexBoard[i]] = WhiteKing
 
 
 		case '1':
@@ -71,10 +77,20 @@ func ParseFen(fen string) []int8 {
 			i--
 
 		default:
-			return boardArr
+			return board, errors.New("invalid FEN")
 		}
 		i++
 	}
 
-	return boardArr
+	switch fenArray[1][0] {
+	case 'w':
+		board.Turn = White
+	case 'b':
+		board.Turn = Black
+	default:
+		return board, errors.New("invalid FEN")
+	}
+	
+
+	return board, nil
 }

@@ -45,6 +45,14 @@ func GenerateMovesList(b board.Board) []Move {
 			if b.Turn == board.Black{
 				availableMoves = generateQueenMoves(b,hex)
 			}
+		case board.WhiteRook:
+			if b.Turn == board.White{
+				availableMoves = generateRookMoves(b,hex)
+			}
+		case board.BlackRook:
+			if b.Turn == board.Black{
+				availableMoves = generateRookMoves(b,hex)
+			}
 		}
 		moves = append(moves, availableMoves...)
 	}
@@ -213,6 +221,24 @@ func generateQueenMoves(b board.Board, origin int8) []Move {
 	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
 	// check downleft diag
 	moves = validateLongRangeMoves(origin,-nextFile - nextRank,b,moves)
+
+	return moves
+}
+
+func generateRookMoves(b board.Board, origin int8) []Move {
+	var moves []Move
+
+	// move up
+	moves = validateLongRangeMoves(origin, nextRank,b,moves)
+
+	// move down
+	moves = validateLongRangeMoves(origin,-nextRank,b,moves)
+
+	// move left
+	moves = validateLongRangeMoves(origin, -nextFile, b, moves)
+
+	// move right
+	moves = validateLongRangeMoves(origin,nextFile,b,moves)
 
 	return moves
 }

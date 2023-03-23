@@ -8,7 +8,7 @@ import (
 )
 
 func main(){
-	boardObj, _  := board.ParseFen("8/8/8/8/4Q3/8/8/8 w kq - 1 2")
+	boardObj, _  := board.ParseFen("8/8/8/8/4r3/8/8/8 b kq - 1 2")
 	boardObj.CastlingRights = "KQkq"
 
 	for i := 0x70; i >= 0x00; i -= 0x10 {

@@ -53,6 +53,14 @@ func GenerateMovesList(b board.Board) []Move {
 			if b.Turn == board.Black{
 				availableMoves = generateRookMoves(b,hex)
 			}
+		case board.WhiteBishop:
+			if b.Turn == board.White{
+				availableMoves = generateBishopMoves(b,hex)
+			}
+		case board.BlackBishop:
+			if b.Turn == board.Black{
+				availableMoves = generateBishopMoves(b,hex)
+			}
 		}
 		moves = append(moves, availableMoves...)
 	}
@@ -239,6 +247,24 @@ func generateRookMoves(b board.Board, origin int8) []Move {
 
 	// move right
 	moves = validateLongRangeMoves(origin,nextFile,b,moves)
+
+	return moves
+}
+
+func generateBishopMoves(b board.Board, origin int8) []Move {
+	var moves []Move
+
+	// move up left
+	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
+
+	// move up right
+	moves = validateLongRangeMoves(origin,nextRank + nextFile,b,moves)
+
+	// move down left
+	moves = validateLongRangeMoves(origin, -nextRank - nextFile, b, moves)
+
+	// move down right
+	moves = validateLongRangeMoves(origin,nextFile - nextRank,b,moves)
 
 	return moves
 }

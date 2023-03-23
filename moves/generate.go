@@ -37,6 +37,10 @@ func GenerateMovesList(b board.Board) []Move {
 			if b.Turn == board.Black{
 				availableMoves = generateKingMoves(b, hex)
 			}
+		case board.WhiteQueen:
+			if b.Turn == board.White{
+				availableMoves = generateQueenMoves(b,hex)
+			}
 		}
 		moves = append(moves, availableMoves...)
 	}
@@ -180,6 +184,245 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 					moves = append(moves, move)
 				}
 			}
+		}
+	}
+
+	return moves
+}
+
+func generateQueenMoves(b board.Board, origin int8) []Move {
+	var moves []Move
+	curRank := board.Rank(origin)
+	startRank := board.RankSquares[curRank]
+
+	// check left moves
+	for i:= origin; i >= startRank; i -= 0x01{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check right moves
+	for i:= origin; i <= startRank + 0x07; i += 0x01{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check up moves
+	for i := origin; board.Rank(i) <= 7; i += nextRank{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+	// check down moves
+	for i := origin; board.Rank(i) >= 0; i -= nextRank{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check upright diag
+	for i := origin; board.LegalSquare(i); i += nextFile + nextRank{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check downright diag
+	for i := origin; board.LegalSquare(i); i += nextFile - nextRank{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check upleft diag
+	for i := origin; board.LegalSquare(i); i += nextRank - nextFile{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
+		}
+	}
+
+	// check downleft diag
+	for i := origin; board.LegalSquare(i); i -= nextFile + nextRank{
+		if b.State[i] == board.Empty{
+			move := createMove(origin, i)
+			if b.Turn == board.White{
+				move.MovedPiece = board.WhiteQueen
+			}else{
+				move.MovedPiece = board.BlackQueen
+			}
+			moves = append(moves, move)
+		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.WhiteQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.Black{
+			move := createMove(origin,i)
+			move.Capture = b.State[i]
+			move.MovedPiece = board.BlackQueen
+			moves = append(moves, move)
+			break
+		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+			break
+		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+			break
 		}
 	}
 

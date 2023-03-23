@@ -198,45 +198,41 @@ func generateQueenMoves(b board.Board, origin int8) []Move {
 	var moves []Move
 	
 	// check left moves
-	moves = validateQueenMoves(origin,-nextFile, b, moves)
+	moves = validateLongRangeMoves(origin,-nextFile, b, moves)
 	// check right moves
-	moves = validateQueenMoves(origin, nextFile,b,moves)
+	moves = validateLongRangeMoves(origin, nextFile,b,moves)
 	// check up moves
-	moves = validateQueenMoves(origin, nextRank,b,moves)
+	moves = validateLongRangeMoves(origin, nextRank,b,moves)
 	// check down moves
-	moves = validateQueenMoves(origin,-nextFile,b,moves)
+	moves = validateLongRangeMoves(origin,-nextFile,b,moves)
 	// check upright diag
-	moves = validateQueenMoves(origin, nextRank + nextFile,b,moves)
+	moves = validateLongRangeMoves(origin, nextRank + nextFile,b,moves)
 	// check downright diag
-	moves = validateQueenMoves(origin,nextFile - nextRank,b,moves)
+	moves = validateLongRangeMoves(origin,nextFile - nextRank,b,moves)
 	// check upleft diag
-	moves = validateQueenMoves(origin,nextRank - nextFile,b,moves)
+	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
 	// check downleft diag
-	moves = validateQueenMoves(origin,-nextFile - nextRank,b,moves)
+	moves = validateLongRangeMoves(origin,-nextFile - nextRank,b,moves)
 
 	return moves
 }
 
-func validateQueenMoves(origin int8, delta int8, b board.Board, moves []Move) []Move {
+func validateLongRangeMoves(origin int8, delta int8, b board.Board, moves []Move) []Move {
 	for i := origin; board.LegalSquare(i); i += delta{
 		if b.State[i] == board.Empty{
 			move := createMove(origin, i)
-			if b.Turn == board.White{
-				move.MovedPiece = board.WhiteQueen
-			}else{
-				move.MovedPiece = board.BlackQueen
-			}
+			move.MovedPiece = b.State[origin]
 			moves = append(moves, move)
 		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
 			move := createMove(origin,i)
 			move.Capture = b.State[i]
-			move.MovedPiece = board.WhiteQueen
+			move.MovedPiece = b.State[origin]
 			moves = append(moves, move)
 			break
 		}else if b.State[i] > board.Empty && b.Turn == board.Black{
 			move := createMove(origin,i)
 			move.Capture = b.State[i]
-			move.MovedPiece = board.BlackQueen
+			move.MovedPiece = b.State[origin]
 			moves = append(moves, move)
 			break
 		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{

@@ -235,16 +235,12 @@ func generateQueenMoves(b board.Board, origin int8) []Move {
 
 func generateRookMoves(b board.Board, origin int8) []Move {
 	var moves []Move
-
 	// move up
 	moves = validateLongRangeMoves(origin, nextRank,b,moves)
-
 	// move down
 	moves = validateLongRangeMoves(origin,-nextRank,b,moves)
-
 	// move left
 	moves = validateLongRangeMoves(origin, -nextFile, b, moves)
-
 	// move right
 	moves = validateLongRangeMoves(origin,nextFile,b,moves)
 
@@ -253,16 +249,12 @@ func generateRookMoves(b board.Board, origin int8) []Move {
 
 func generateBishopMoves(b board.Board, origin int8) []Move {
 	var moves []Move
-
 	// move up left
 	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
-
 	// move up right
 	moves = validateLongRangeMoves(origin,nextRank + nextFile,b,moves)
-
 	// move down left
 	moves = validateLongRangeMoves(origin, -nextRank - nextFile, b, moves)
-
 	// move down right
 	moves = validateLongRangeMoves(origin,nextFile - nextRank,b,moves)
 

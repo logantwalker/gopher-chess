@@ -1,7 +1,10 @@
 package moves
 
 import (
+	"errors"
 	"fmt"
+	"regexp"
+	"strings"
 
 	"github.com/logantwalker/gopher-chess/board"
 )
@@ -49,6 +52,19 @@ type Move struct{
 	EnPassant	int8
 }
 
+func CreateMoveFromInput(input string) (Move, error) {
+	input = strings.Trim(input, " ")
+	if m, _ := regexp.MatchString("^[a-h][1-8][a-h][1-8]$", input); !m {
+		return Move{}, errors.New("invalid move")
+	}
+
+	from := board.SquareStringToHex[input[:2]]
+	to := board.SquareStringToHex[input[2:]]
+
+	var move Move = Move{From: from, To: to}
+	return move, nil
+}
+
 
 func createMove(origin int8, dest int8) Move {
 	var move Move
@@ -72,3 +88,7 @@ func PrintMoves(moves []Move) {
 		fmt.Println(pieceSymbol + " " + moveString)
 	}
 } 
+
+func MakeMove(b board.Board, move Move){
+
+}

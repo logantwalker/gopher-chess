@@ -7,16 +7,22 @@ import (
 	"strings"
 )
 
-const StartingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+var (
+	StartingFen 	string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+	CastleNone 		int8 = 0
+	CastleShort		int8 = 1
+	CastleLong		int8 = 2
+)
 
 
 type Board struct {
 	// history 		[]MoveRecord
 	State 			[]int8
 	Turn 			int8
-	CastlingRights 	string
+	WhiteCastle 	int8
+	BlackCastle 	int8
 	HalfMoveClock 	int
-	FullMoves		int
+	FullMoveClock	int
 }
 
 func NewBoard(fen string) Board {
@@ -103,7 +109,21 @@ func ParseFen(fen string) (Board, error) {
 	default:
 		return board, errors.New("invalid FEN")
 	}
+
+	castleRights := strings.Split(fenArray[2],"") 
 	
+	for _, char := range castleRights {
+		switch char {
+		case "K":
+			board.WhiteCastle += CastleShort
+		case "Q":
+			board.WhiteCastle += CastleLong
+		case "k":
+			board.BlackCastle += CastleShort
+		case "q":
+			board.BlackCastle += CastleLong
+		}
+	}
 
 	return board, nil
 }

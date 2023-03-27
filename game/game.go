@@ -32,6 +32,8 @@ func (g *Game) Run(){
 
 		if input == "quit"{
 			break
+		}else if  m, err := moves.CreateMoveFromInput(input); err == nil{
+			fmt.Println(m)
 		}
 		
 		switch input {
@@ -43,7 +45,5 @@ func (g *Game) Run(){
 		}
 		fmt.Printf("> ")
 	}
-
-	
 
 }

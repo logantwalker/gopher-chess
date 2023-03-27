@@ -1,8 +1,6 @@
 package moves
 
 import (
-	"strings"
-
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -315,10 +313,10 @@ func checkCastlingAvailability(b board.Board) []bool {
 	castleRights := []bool{false, false}
 
 	if b.Turn == board.White{
-		if strings.Contains(b.CastlingRights,"K") {
+		if (b.WhiteCastle & 1) > 0  {
 			castleRights[0] = true
 		}
-		if strings.Contains(b.CastlingRights, "Q"){
+		if (b.WhiteCastle & 2) > 0 {
 			castleRights[1] = true
 		}
 
@@ -329,10 +327,10 @@ func checkCastlingAvailability(b board.Board) []bool {
 			castleAbility[1] = true
 		}
 	}else{
-		if strings.Contains(b.CastlingRights,"k") {
+		if (b.WhiteCastle & 1) > 0 {
 			castleRights[0] = true
 		}
-		if strings.Contains(b.CastlingRights, "q"){
+		if (b.BlackCastle & 2) > 0 {
 			castleRights[1] = true
 		}
 

@@ -2,6 +2,8 @@ package board
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"strings"
 )
 
@@ -15,6 +17,16 @@ type Board struct {
 	CastlingRights 	string
 	HalfMoveClock 	int
 	FullMoves		int
+}
+
+func NewBoard(fen string) Board {
+	b, err := ParseFen(fen)
+
+	if err != nil{
+		log.Fatal(err.Error())
+	}
+
+	return b
 }
 
 func ParseFen(fen string) (Board, error) {
@@ -98,4 +110,14 @@ func ParseFen(fen string) (Board, error) {
 
 func LegalSquare(square int8) bool {
 	return !(uint8(square)&0x88 != 0)
+}
+
+func (b *Board) PrintBoard(){
+	for i := 0x70; i >= 0x00; i -= 0x10 {
+		for j := 0; j < 8; j++ {
+			square := i + j
+			fmt.Printf("%v ", GetPieceSymbol(b.State[square]))
+		}
+		fmt.Printf("\n")
+	}
 }

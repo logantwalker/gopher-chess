@@ -1,6 +1,10 @@
 package moves
 
-import "github.com/logantwalker/gopher-chess/board"
+import (
+	"fmt"
+
+	"github.com/logantwalker/gopher-chess/board"
+)
 
 var (
 	nextRank int8 = 16
@@ -55,3 +59,16 @@ func createMove(origin int8, dest int8) Move {
 	
 	return move
 }
+
+func PrintMoves(moves []Move) {
+	for _, move := range moves {
+		pieceSymbol := board.GetPieceSymbol(move.MovedPiece)
+		moveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
+
+		if move.Capture != board.Empty{
+			captureSymbol := board.GetPieceSymbol(move.Capture)
+			fmt.Println(pieceSymbol + " " + moveString + " " + captureSymbol)
+		}
+		fmt.Println(pieceSymbol + " " + moveString)
+	}
+} 

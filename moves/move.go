@@ -42,14 +42,22 @@ var (
 	blackQueenSideCastlingSquares []board.Square = []board.Square{board.B8, board.C8, board.D8}
 )
 
+// move types
+var (
+	moveOrdinary 	int8 = 0
+	moveShortCastle int8 = 1
+	moveLongCastle 	int8 = 2
+	movePromote		int8 = 3
+	moveEnPassant	int8 = 4
+)
+
 type Move struct{
 	From 		board.Square
 	To 			board.Square
 	Capture 	int8
 	MovedPiece 	int8
+	Type 		int8
 	Promotion 	int8
-	Castling	int8
-	EnPassant	int8
 }
 
 func CreateMoveFromInput(input string) (Move, error) {
@@ -89,6 +97,44 @@ func PrintMoves(moves []Move) {
 	}
 } 
 
-func MakeMove(b board.Board, move Move){
+func MakeMove(b board.Board, move Move) board.Board{
+	b.HalfMoveClock++
 
+	if b.Turn == board.Black{
+		b.FullMoveClock++
+	}
+
+	validMove, err := ValidateUserMove(b, move)
+	if err != nil {
+		fmt.Println(err.Error())
+		return b
+	}
+
+	switch validMove.Type {
+	case moveOrdinary:
+		b.State[validMove.From] = board.Empty
+		b.State[validMove.To] = validMove.MovedPiece
+
+		switch validMove.MovedPiece {
+		case board.WhiteKing:
+			if validMove.From == board.WhiteKingStartSquare{
+				b.WhiteCastle = board.CastleNone
+			}
+		}
+	}
+	b.Turn = -1 * b.Turn
+	
+	return b
+}
+
+func ValidateUserMove(b board.Board, move Move) (Move, error){
+	validMoves := GenerateMovesList(b)
+
+	for _, validMove := range validMoves{
+		if validMove.To == move.To && validMove.From == move.From{
+			return validMove, nil
+		}
+	}
+
+	return Move{}, errors.New("invalid move")
 }

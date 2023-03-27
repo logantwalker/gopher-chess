@@ -12,6 +12,12 @@ var (
 	CastleNone 		int8 = 0
 	CastleShort		int8 = 1
 	CastleLong		int8 = 2
+
+	WhiteKingStartSquare 	Square = E1
+	WhiteRookStartSquares []Square = []Square{A1,H1}
+
+	BlackKingStartSquare 	Square = E8
+	BlackRookStartSquares []Square = []Square{A8,H8}
 )
 
 

@@ -164,13 +164,13 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 				if canCastle[0] && delta == 2*moveRight{
 					move := createMove(origin, dest)
 					move.MovedPiece = board.WhiteKing
-					move.Castling = int8(whiteKingSideCastlingSquares[1])
+					move.Type = moveShortCastle
 					moves = append(moves, move)
 				}
 				if canCastle[1] && delta == 2*moveLeft{
 					move := createMove(origin, dest)
 					move.MovedPiece = board.WhiteKing
-					move.Castling = int8(whiteQueenSideCastlingSquares[1])
+					move.Type = moveLongCastle
 					moves = append(moves, move)
 				}
 			}else{
@@ -186,13 +186,13 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 				if canCastle[0] && delta == 2*moveRight{
 					move := createMove(origin, dest)
 					move.MovedPiece = board.WhiteKing
-					move.Castling = int8(blackKingSideCastlingSquares[1])
+					move.Type = moveShortCastle
 					moves = append(moves, move)
 				}
 				if canCastle[1] && delta == 2*moveLeft{
 					move := createMove(origin, dest)
 					move.MovedPiece = board.BlackKing
-					move.Castling = int8(blackQueenSideCastlingSquares[1])
+					move.Type = moveLongCastle
 					moves = append(moves, move)
 				}
 			}else{
@@ -210,7 +210,6 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 
 func generateQueenMoves(b board.Board, origin int8) []Move {
 	var moves []Move
-	
 	// check left moves
 	moves = validateLongRangeMoves(origin,-nextFile, b, moves)
 	// check right moves
@@ -218,7 +217,7 @@ func generateQueenMoves(b board.Board, origin int8) []Move {
 	// check up moves
 	moves = validateLongRangeMoves(origin, nextRank,b,moves)
 	// check down moves
-	moves = validateLongRangeMoves(origin,-nextFile,b,moves)
+	moves = validateLongRangeMoves(origin,-nextRank,b,moves)
 	// check upright diag
 	moves = validateLongRangeMoves(origin, nextRank + nextFile,b,moves)
 	// check downright diag

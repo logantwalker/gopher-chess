@@ -112,7 +112,6 @@ func MakeMove(b board.Board, move Move) board.Board{
 	}
 
 	switch validMove.Type {
-		// need to deal with captures
 	case moveOrdinary:
 		b.State[validMove.From] = board.Empty
 		b.State[validMove.To] = validMove.MovedPiece
@@ -172,6 +171,33 @@ func MakeMove(b board.Board, move Move) board.Board{
 		}
 
 		b.EnPassant = 0
+	case moveShortCastle:
+		b.State[validMove.From] = board.Empty
+		b.State[validMove.To] = validMove.MovedPiece
+
+		switch validMove.MovedPiece {
+		case board.WhiteKing:
+			b.State[board.WhiteRookStartSquares[1]] = board.Empty
+			b.State[int8(validMove.To) - nextFile] = board.WhiteRook
+			b.WhiteCastle &= ^board.CastleShort
+		case board.BlackKing:
+			b.State[board.BlackRookStartSquares[1]] = board.Empty
+			b.State[int8(validMove.To) - nextFile] = board.BlackRook
+			b.BlackCastle &= ^board.CastleShort	
+		}
+	case moveLongCastle:
+		b.State[validMove.From] = board.Empty
+		b.State[validMove.To] = validMove.MovedPiece
+		switch validMove.MovedPiece {
+		case board.WhiteKing:
+			b.State[board.WhiteRookStartSquares[0]] = board.Empty
+			b.State[int8(validMove.To) + nextFile] = board.WhiteRook
+			b.WhiteCastle &= ^board.CastleLong
+		case board.BlackKing:	
+			b.State[board.BlackRookStartSquares[0]] = board.Empty
+			b.State[int8(validMove.To) + nextFile] = board.BlackRook
+			b.BlackCastle &= ^board.CastleLong	
+		}
 	}
 
 	b.Turn = -1 * b.Turn

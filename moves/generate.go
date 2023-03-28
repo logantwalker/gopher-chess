@@ -183,7 +183,7 @@ func generateKnightMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-//regarding king moves, I need to check king safety in the future before alowing a move
+// regarding king moves, I need to check king safety in the future before alowing a move.
 func generateKingMoves(b board.Board, origin int8) []Move {
 	var moves []Move
 	for _, delta := range kingMoves{
@@ -215,7 +215,7 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 				canCastle := checkCastlingAvailability(b)
 				if canCastle[0] && delta == 2*moveRight{
 					move := createMove(origin, dest)
-					move.MovedPiece = board.WhiteKing
+					move.MovedPiece = board.BlackKing
 					move.Type = moveShortCastle
 					moves = append(moves, move)
 				}
@@ -356,7 +356,7 @@ func checkCastlingAvailability(b board.Board) []bool {
 			castleAbility[1] = true
 		}
 	}else{
-		if (b.WhiteCastle & 1) > 0 {
+		if (b.BlackCastle & 1) > 0 {
 			castleRights[0] = true
 		}
 		if (b.BlackCastle & 2) > 0 {

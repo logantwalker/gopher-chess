@@ -111,6 +111,7 @@ func MakeMove(b board.Board, move Move) board.Board{
 	}
 
 	switch validMove.Type {
+		// need to deal with captures
 	case moveOrdinary:
 		b.State[validMove.From] = board.Empty
 		b.State[validMove.To] = validMove.MovedPiece
@@ -120,10 +121,58 @@ func MakeMove(b board.Board, move Move) board.Board{
 			if validMove.From == board.WhiteKingStartSquare{
 				b.WhiteCastle = board.CastleNone
 			}
+		case board.BlackKing:
+			if validMove.From == board.BlackKingStartSquare{
+				b.BlackCastle = board.CastleNone
+			}
+		case board.WhiteRook:
+			if validMove.From == board.WhiteRookStartSquares[0]{
+				b.WhiteCastle &= ^board.CastleLong
+			}else if validMove.From == board.WhiteRookStartSquares[1]{
+				b.WhiteCastle &= ^board.CastleShort
+			}
+		case board.BlackRook:
+			if validMove.From == board.BlackRookStartSquares[0]{
+				b.BlackCastle &= ^board.CastleLong
+			}else if validMove.From == board.BlackRookStartSquares[1]{
+				b.BlackCastle &= ^board.CastleShort
+			}
+		case board.WhitePawn:
+			b.HalfMoveClock = 0
+			delta := board.Rank(int8(move.To)) - board.Rank(int8(move.From))
+
+			if delta > 1 && (b.State[move.To + board.Square(nextFile)] == board.BlackPawn || b.State[move.To + board.Square(-nextFile)] == board.BlackPawn){
+				b.EnPassant = move.To - board.Square(nextRank)
+			}
+		case board.BlackPawn:
+			b.HalfMoveClock = 0
+			delta := board.Rank(int8(move.From)) - board.Rank(int8(move.To))
+
+			if delta > 1 && (b.State[move.To + board.Square(nextFile)] == board.WhitePawn || b.State[move.To + board.Square(-nextFile)] == board.WhitePawn){
+				b.EnPassant = move.From - board.Square(nextRank)
+			}
 		}
+	case moveEnPassant:
+		switch validMove.MovedPiece {
+		case board.WhitePawn:
+			b.State[validMove.From] = board.Empty
+			b.State[validMove.To] = validMove.MovedPiece
+			b.State[int8(b.EnPassant) - nextRank] = board.Empty
+
+			b.HalfMoveClock = 0
+		case board.BlackPawn:
+			b.State[validMove.From] = board.Empty
+			b.State[validMove.To] = validMove.MovedPiece
+			b.State[int8(b.EnPassant) + nextRank] = board.Empty
+
+			b.HalfMoveClock = 0
+		}
+
+		b.EnPassant = 0
 	}
+
 	b.Turn = -1 * b.Turn
-	
+
 	return b
 }
 

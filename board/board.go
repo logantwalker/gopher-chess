@@ -27,6 +27,7 @@ type Board struct {
 	Turn 			int8
 	WhiteCastle 	int8
 	BlackCastle 	int8
+	EnPassant 		Square
 	HalfMoveClock 	int
 	FullMoveClock	int
 }

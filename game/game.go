@@ -37,7 +37,6 @@ func (g *Game) Run(){
 
 			g.board = updatedState
 			g.board.PrintBoard()
-			fmt.Println(board.SquareHexToString[g.board.EnPassant])
 		}
 		
 		switch input {

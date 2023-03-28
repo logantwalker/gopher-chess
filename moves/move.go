@@ -92,6 +92,7 @@ func PrintMoves(moves []Move) {
 		if move.Capture != board.Empty{
 			captureSymbol := board.GetPieceSymbol(move.Capture)
 			fmt.Println(pieceSymbol + " " + moveString + " " + captureSymbol)
+			return
 		}
 		fmt.Println(pieceSymbol + " " + moveString)
 	}
@@ -115,7 +116,9 @@ func MakeMove(b board.Board, move Move) board.Board{
 	case moveOrdinary:
 		b.State[validMove.From] = board.Empty
 		b.State[validMove.To] = validMove.MovedPiece
-
+		if move.Capture != board.Empty{
+			b.HalfMoveClock = 0
+		}
 		switch validMove.MovedPiece {
 		case board.WhiteKing:
 			if validMove.From == board.WhiteKingStartSquare{

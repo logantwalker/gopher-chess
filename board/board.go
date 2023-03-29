@@ -30,6 +30,7 @@ type Board struct {
 	EnPassant 		Square
 	HalfMoveClock 	int
 	FullMoveClock	int
+	Ply 			int
 }
 
 func NewBoard(fen string) Board {

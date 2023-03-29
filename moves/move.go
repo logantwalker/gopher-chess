@@ -200,6 +200,7 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 		}
 	}
 
+	b.Ply ++
 	b.Turn = -1 * b.Turn
 
 	return b

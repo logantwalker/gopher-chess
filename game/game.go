@@ -30,18 +30,16 @@ func (g *Game) Run(){
 	for scanner.Scan() {
 		input := scanner.Text()
 
-		if input == "quit"{
+		if input == "quit" || input == "q"{
 			break
 		}else if  m, err := moves.CreateMoveFromInput(input); err == nil{
-			updatedState := moves.MakeMove(g.board,m)
-
-			g.board = updatedState
+			moves.MakeMove(&g.board,m)
 			g.board.PrintBoard()
 		}
 		
 		switch input {
 		case "moves":
-			m := moves.GenerateMovesList(g.board)
+			m := moves.GenerateMovesList(&g.board)
 			moves.PrintMoves(m)
 		case "print":
 			g.board.PrintBoard()

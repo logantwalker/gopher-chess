@@ -24,9 +24,9 @@ var (
 	moveDownandLeft = moveDown + moveLeft
 
 	knightMoves = []int8{moveUp + moveUpandRight, moveUp + moveUpandLeft, moveDown + moveDownandLeft, moveDown + moveDownandRight, moveUp + 2*moveLeft, moveDown + 2*moveLeft, moveUp + 2*moveRight, moveDown + 2*moveRight}
-	rookMoves = []int8{moveUp, moveDown, moveLeft, moveRight}
-	bishopMoves = []int8{moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
-	queenMoves = []int8{moveUp, moveDown, moveLeft, moveRight, moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
+	// rookMoves = []int8{moveUp, moveDown, moveLeft, moveRight}
+	// bishopMoves = []int8{moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
+	// queenMoves = []int8{moveUp, moveDown, moveLeft, moveRight, moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight}
 	kingMoves = []int8{moveUp, moveDown, moveLeft, moveRight, moveUpandLeft, moveUpandRight, moveDownandLeft, moveDownandRight, 2*moveLeft, 2*moveRight}
 
 	whitePawnMoves = []int8{moveUp, 2*moveUp, moveUpandLeft, moveUpandRight,}
@@ -98,7 +98,7 @@ func PrintMoves(moves []Move) {
 	}
 } 
 
-func MakeMove(b board.Board, move Move) board.Board{
+func MakeMove(b *board.Board, move Move) *board.Board{
 	b.HalfMoveClock++
 
 	if b.Turn == board.Black{
@@ -205,7 +205,7 @@ func MakeMove(b board.Board, move Move) board.Board{
 	return b
 }
 
-func ValidateUserMove(b board.Board, move Move) (Move, error){
+func ValidateUserMove(b *board.Board, move Move) (Move, error){
 	validMoves := GenerateMovesList(b)
 
 	for _, validMove := range validMoves{

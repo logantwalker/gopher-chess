@@ -4,7 +4,7 @@ import (
 	"github.com/logantwalker/gopher-chess/board"
 )
 
-func GenerateMovesList(b board.Board) []Move {
+func GenerateMovesList(b *board.Board) []Move {
 	var moves []Move
 
 	for _, hex := range board.HexBoard {
@@ -65,7 +65,7 @@ func GenerateMovesList(b board.Board) []Move {
 	return moves
 }
 
-func generatePawnMoves(b board.Board, origin int8) []Move {
+func generatePawnMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	if b.Turn == board.White{
 		if b.EnPassant != 0{
@@ -164,7 +164,7 @@ func generatePawnMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateKnightMoves(b board.Board, origin int8) []Move {
+func generateKnightMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 
 	for _, delta := range knightMoves{
@@ -184,7 +184,7 @@ func generateKnightMoves(b board.Board, origin int8) []Move {
 }
 
 // regarding king moves, I need to check king safety in the future before alowing a move.
-func generateKingMoves(b board.Board, origin int8) []Move {
+func generateKingMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	for _, delta := range kingMoves{
 		dest := origin + delta
@@ -238,7 +238,7 @@ func generateKingMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateQueenMoves(b board.Board, origin int8) []Move {
+func generateQueenMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	// check left moves
 	moves = validateLongRangeMoves(origin,-nextFile, b, moves)
@@ -260,7 +260,7 @@ func generateQueenMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateRookMoves(b board.Board, origin int8) []Move {
+func generateRookMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	// move up
 	moves = validateLongRangeMoves(origin, nextRank,b,moves)
@@ -274,7 +274,7 @@ func generateRookMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateBishopMoves(b board.Board, origin int8) []Move {
+func generateBishopMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	// move up left
 	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
@@ -288,7 +288,7 @@ func generateBishopMoves(b board.Board, origin int8) []Move {
 	return moves
 }
 
-func validateLongRangeMoves(origin int8, delta int8, b board.Board, moves []Move) []Move {
+func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Move) []Move {
 	for i := origin; board.LegalSquare(i); i += delta{
 		if b.State[i] == board.Empty{
 			move := createMove(origin, i)
@@ -316,7 +316,7 @@ func validateLongRangeMoves(origin int8, delta int8, b board.Board, moves []Move
 	return moves
 }
 
-func checkPawnAttacks(b board.Board, origin int8) []bool{
+func checkPawnAttacks(b *board.Board, origin int8) []bool{
 	var attacks = []bool{false, false}
 	if b.Turn == board.White{
 		if b.State[origin + moveUpandLeft] < int8(0) {
@@ -337,7 +337,7 @@ func checkPawnAttacks(b board.Board, origin int8) []bool{
 	return attacks
 }
 
-func checkCastlingAvailability(b board.Board) []bool {
+func checkCastlingAvailability(b *board.Board) []bool {
 	castleAbility := []bool{false, false}
 	castleRights := []bool{false, false}
 

@@ -92,12 +92,22 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 				if delta == moveUpandLeft && validateAttacks[0]{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.WhitePawn
+					move.Capture = b.State[dest]
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.WhiteQueen
+					}
 					moves = append(moves, move)
 				}
 
 				if delta == moveUpandRight && validateAttacks[1]{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.WhitePawn
+					move.Capture = b.State[dest]
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.WhiteQueen
+					}
 					moves = append(moves, move)
 				}
 			}else if delta == 2*moveUp{
@@ -110,6 +120,10 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 				if b.State[dest] == board.Empty{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.WhitePawn
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.WhiteQueen
+					}
 					moves = append(moves, move)
 				}
 			}
@@ -137,12 +151,22 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 				if delta == moveDownandLeft && validateAttacks[0]{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.BlackPawn
+					move.Capture = b.State[dest]
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.BlackQueen
+					}
 					moves = append(moves, move)
 				}
 
 				if delta == moveDownandRight && validateAttacks[1]{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.BlackPawn
+					move.Capture = b.State[dest]
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.BlackQueen
+					}
 					moves = append(moves, move)
 				}
 			}else if delta == 2*moveDown{
@@ -155,6 +179,10 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 				if b.State[dest] == board.Empty{
 					move := createMove(origin,dest)
 					move.MovedPiece = board.BlackPawn
+					if board.Rank(dest) == 7{
+						move.Type = movePromote
+						move.Promotion = board.BlackQueen
+					}
 					moves = append(moves, move)
 				}
 			}

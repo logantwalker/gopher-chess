@@ -198,6 +198,11 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 			b.State[int8(validMove.To) + nextFile] = board.BlackRook
 			b.BlackCastle &= ^board.CastleLong	
 		}
+	case movePromote:
+		b.State[validMove.From] = board.Empty
+		b.State[validMove.To] = validMove.Promotion
+
+		b.HalfMoveClock = 0
 	}
 
 	b.Ply ++

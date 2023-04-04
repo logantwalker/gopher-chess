@@ -1,6 +1,8 @@
 package moves
 
 import (
+	"fmt"
+
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -316,89 +318,50 @@ func generateBishopMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Move) []Move {
-	for i := origin; board.LegalSquare(i); i += delta{
-		if b.State[i] == board.Empty{
-			move := createMove(origin, i)
-			move.MovedPiece = b.State[origin]
-			moves = append(moves, move)
-		}else if b.State[i] < board.Empty && b.Turn == board.White{ // checking if occupying piece is black and turn is white
-			move := createMove(origin,i)
-			move.Capture = b.State[i]
-			move.MovedPiece = b.State[origin]
-			moves = append(moves, move)
-			break
-		}else if b.State[i] > board.Empty && b.Turn == board.Black{
-			move := createMove(origin,i)
-			move.Capture = b.State[i]
-			move.MovedPiece = b.State[origin]
-			moves = append(moves, move)
-			break
-		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
-			break
-		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
-			break
+func generateAttacksList(b *board.Board){
+	for _, square := range board.HexBoard{
+		if b.State[square] != 0 {
+			piece := b.State[square]
+
+			switch b.Turn {
+			case board.White:
+				if piece > 0 {
+					switch piece {
+					case board.WhitePawn:
+						pawnPsuedoAttacks(b,square)
+					case board.WhiteKnight:
+						knightPsuedoAttacks(b,square)
+					case board.WhiteBishop:
+						bishopPsuedoAttacks(b, square)
+					case board.WhiteRook:
+						rookPsuedoAttacks(b,square)
+					case board.WhiteQueen:
+						queenPsuedoAttacks(b,square)
+					case board.WhiteKing:
+						kingPsuedoAttacks(b,square)
+					}
+				}
+			case board.Black:
+				if piece < 0 {
+					switch piece {
+					case board.BlackPawn:
+						pawnPsuedoAttacks(b,square)
+					case board.BlackKnight:
+						knightPsuedoAttacks(b,square)
+					case board.BlackBishop:
+						bishopPsuedoAttacks(b, square)
+					case board.BlackRook:
+						rookPsuedoAttacks(b,square)
+					case board.BlackQueen:
+						queenPsuedoAttacks(b,square)
+					case board.BlackKing:
+						kingPsuedoAttacks(b,square)
+					}
+				}
+			}
 		}
 	}
-
-	return moves
-}
-
-func checkPawnAttacks(b *board.Board, origin int8) []bool{
-	var attacks = []bool{false, false}
-	if b.Turn == board.White{
-		if b.State[origin + moveUpandLeft] < int8(0) {
-			attacks[0] = true
-		}
-		if b.State[origin + moveUpandRight] < int8(0) {
-			attacks[1] = true
-		}
-	}else{
-		if b.State[origin + moveDownandLeft] > int8(0) {
-			attacks[0] = true
-		}
-		if b.State[origin + moveDownandRight] > int8(0) {
-			attacks[1] = true
-		}
-	}
-
-	return attacks
-}
-
-func checkCastlingAvailability(b *board.Board) []bool {
-	castleAbility := []bool{false, false}
-	castleRights := []bool{false, false}
-
-	if b.Turn == board.White{
-		if (b.WhiteCastle & 1) > 0  {
-			castleRights[0] = true
-		}
-		if (b.WhiteCastle & 2) > 0 {
-			castleRights[1] = true
-		}
-
-		if castleRights[0] && b.State[whiteKingSideCastlingSquares[0]] == board.Empty && b.State[whiteKingSideCastlingSquares[1]] == board.Empty{
-			castleAbility[0] = true
-		}
-		if castleRights[1] && b.State[whiteQueenSideCastlingSquares[0]] == board.Empty && b.State[whiteQueenSideCastlingSquares[1]] == board.Empty && b.State[whiteQueenSideCastlingSquares[2]] == board.Empty{
-			castleAbility[1] = true
-		}
-	}else{
-		if (b.BlackCastle & 1) > 0 {
-			castleRights[0] = true
-		}
-		if (b.BlackCastle & 2) > 0 {
-			castleRights[1] = true
-		}
-
-		if castleRights[0] && b.State[blackKingSideCastlingSquares[0]] == board.Empty && b.State[blackKingSideCastlingSquares[1]] == board.Empty{
-			castleAbility[0] = true
-		}
-		if castleRights[1] && b.State[blackQueenSideCastlingSquares[0]] == board.Empty && b.State[blackQueenSideCastlingSquares[1]] == board.Empty && b.State[blackQueenSideCastlingSquares[2]] == board.Empty{
-			castleAbility[1] = true
-		}
-	}
-
-	return []bool{castleRights[0] && castleAbility[0],castleRights[1] && castleAbility[1],}
+	fmt.Println(b.WhiteAttacks)
+	fmt.Println(b.BlackAttacks)
 }
 

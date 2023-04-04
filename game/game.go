@@ -35,6 +35,8 @@ func (g *Game) Run(){
 		}else if  m, err := moves.CreateMoveFromInput(input); err == nil{
 			moves.MakeMove(&g.board,m)
 			g.board.PrintBoard()
+			fmt.Println(g.board.KingLocations[1],": ",g.board.WhiteAttacks[g.board.KingLocations[1]])
+			fmt.Println(g.board.KingLocations[0],": ",g.board.BlackAttacks[g.board.KingLocations[0]])
 		}
 		
 		switch input {

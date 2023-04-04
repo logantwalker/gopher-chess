@@ -123,10 +123,12 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 			if validMove.From == board.WhiteKingStartSquare{
 				b.WhiteCastle = board.CastleNone
 			}
+			b.KingLocations[0] = int8(validMove.To)
 		case board.BlackKing:
 			if validMove.From == board.BlackKingStartSquare{
 				b.BlackCastle = board.CastleNone
 			}
+			b.KingLocations[1] = int8(validMove.To)
 		case board.WhiteRook:
 			if validMove.From == board.WhiteRookStartSquares[0]{
 				b.WhiteCastle &= ^board.CastleLong
@@ -180,10 +182,12 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 			b.State[board.WhiteRookStartSquares[1]] = board.Empty
 			b.State[int8(validMove.To) - nextFile] = board.WhiteRook
 			b.WhiteCastle &= ^board.CastleShort
+			b.KingLocations[0] = int8(validMove.To)
 		case board.BlackKing:
 			b.State[board.BlackRookStartSquares[1]] = board.Empty
 			b.State[int8(validMove.To) - nextFile] = board.BlackRook
 			b.BlackCastle &= ^board.CastleShort	
+			b.KingLocations[1] = int8(validMove.To)
 		}
 	case moveLongCastle:
 		b.State[validMove.From] = board.Empty
@@ -193,10 +197,12 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 			b.State[board.WhiteRookStartSquares[0]] = board.Empty
 			b.State[int8(validMove.To) + nextFile] = board.WhiteRook
 			b.WhiteCastle &= ^board.CastleLong
+			b.KingLocations[0] = int8(validMove.To)
 		case board.BlackKing:	
 			b.State[board.BlackRookStartSquares[0]] = board.Empty
 			b.State[int8(validMove.To) + nextFile] = board.BlackRook
-			b.BlackCastle &= ^board.CastleLong	
+			b.BlackCastle &= ^board.CastleLong
+			b.KingLocations[1] = int8(validMove.To)
 		}
 	case movePromote:
 		b.State[validMove.From] = board.Empty
@@ -204,21 +210,10 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 
 		b.HalfMoveClock = 0
 	}
+	generateAttacksList(b)
 
 	b.Ply ++
 	b.Turn = -1 * b.Turn
 
 	return b
-}
-
-func ValidateUserMove(b *board.Board, move Move) (Move, error){
-	validMoves := GenerateMovesList(b)
-
-	for _, validMove := range validMoves{
-		if validMove.To == move.To && validMove.From == move.From{
-			return validMove, nil
-		}
-	}
-
-	return Move{}, errors.New("invalid move")
 }

@@ -27,6 +27,9 @@ type Board struct {
 	Turn 			int8
 	WhiteCastle 	int8
 	BlackCastle 	int8
+	WhiteAttacks	map[int8]bool
+	BlackAttacks	map[int8]bool
+	KingLocations	[]int8
 	EnPassant 		Square
 	HalfMoveClock 	int
 	FullMoveClock	int
@@ -35,6 +38,11 @@ type Board struct {
 
 func NewBoard(fen string) Board {
 	b, err := ParseFen(fen)
+
+	b.KingLocations = append(b.KingLocations,int8(WhiteKingStartSquare))
+	b.KingLocations = append(b.KingLocations,int8(BlackKingStartSquare))
+	b.WhiteAttacks = map[int8]bool{}
+	b.BlackAttacks = map[int8]bool{}
 
 	if err != nil{
 		log.Fatal(err.Error())

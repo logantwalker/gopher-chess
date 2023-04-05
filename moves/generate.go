@@ -68,22 +68,28 @@ func GenerateMovesList(b *board.Board) []Move {
 func generatePawnMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	if b.Turn == board.White{
+		pin, isPinned := b.WhitePins[origin]
 		if b.EnPassant != 0{
 			// check left of black pawn
-			if b.State[int8(b.EnPassant) - (nextRank + nextFile)] == board.WhitePawn{
-				move := createMove(int8(b.EnPassant) - (nextRank + nextFile), int8(b.EnPassant))
-				move.MovedPiece = board.WhitePawn
-				move.Type = moveEnPassant
-				moves = append(moves, move)
+			if b.State[int8(b.EnPassant) - (nextRank + nextFile)] == board.WhitePawn && (int8(b.EnPassant) - (nextRank + nextFile) == origin){
+				if isPinned && pin.Delta == moveUpandRight || pin.Delta == -1*moveUpandRight || !isPinned{
+					move := createMove(int8(b.EnPassant) - (nextRank + nextFile), int8(b.EnPassant))
+					move.MovedPiece = board.WhitePawn
+					move.Type = moveEnPassant
+					moves = append(moves, move)
+				}
 			}
 			// check right of black pawn
-			if b.State[int8(b.EnPassant) - (nextRank - nextFile)] == board.WhitePawn{
-				move := createMove(int8(b.EnPassant) - (nextRank - nextFile), int8(b.EnPassant))
-				move.MovedPiece = board.WhitePawn
-				move.Type = moveEnPassant
-				moves = append(moves, move)
+			if b.State[int8(b.EnPassant) - (nextRank - nextFile)] == board.WhitePawn && (int8(b.EnPassant) - (nextRank - nextFile) == origin){
+				if isPinned && (pin.Delta == moveUpandLeft || pin.Delta == -1*moveUpandLeft) || !isPinned{
+					move := createMove(int8(b.EnPassant) - (nextRank - nextFile), int8(b.EnPassant))
+					move.MovedPiece = board.WhitePawn
+					move.Type = moveEnPassant
+					moves = append(moves, move)
+				}
 			}
 		}
+
 		for _, delta := range whitePawnMoves{
 			dest := origin + delta
 			if delta == moveUpandLeft || delta == moveUpandRight{
@@ -129,20 +135,24 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 			}
 		}
 	}else{
-		// check left of white pawn
-		if b.State[int8(b.EnPassant) + (nextRank - nextFile)] == board.BlackPawn{
-			move := createMove(int8(b.EnPassant) + (nextRank - nextFile), int8(b.EnPassant))
-			move.MovedPiece = board.BlackPawn
-			move.Type = moveEnPassant
-			moves = append(moves, move)
+		// pin, isPinned := b.BlackPins[origin]
+		if b.EnPassant != 0{
+			// check left of white pawn
+			if b.State[int8(b.EnPassant) + (nextRank - nextFile)] == board.BlackPawn{
+				move := createMove(int8(b.EnPassant) + (nextRank - nextFile), int8(b.EnPassant))
+				move.MovedPiece = board.BlackPawn
+				move.Type = moveEnPassant
+				moves = append(moves, move)
+			}
+			// check right of white pawn
+			if b.State[int8(b.EnPassant) + (nextRank + nextFile)] == board.BlackPawn{
+				move := createMove(int8(b.EnPassant) + (nextRank + nextFile), int8(b.EnPassant))
+				move.MovedPiece = board.WhitePawn
+				move.Type = moveEnPassant
+				moves = append(moves, move)
+			}
 		}
-		// check right of white pawn
-		if b.State[int8(b.EnPassant) + (nextRank + nextFile)] == board.BlackPawn{
-			move := createMove(int8(b.EnPassant) + (nextRank + nextFile), int8(b.EnPassant))
-			move.MovedPiece = board.WhitePawn
-			move.Type = moveEnPassant
-			moves = append(moves, move)
-		}
+		
 		for _, delta := range blackPawnMoves{
 			dest := origin + delta
 			if delta == moveDownandLeft || delta == moveDownandRight{
@@ -194,6 +204,17 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 
 func generateKnightMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
+
+	var isPiecePinned bool
+	if b.Turn == board.White{
+		_, isPiecePinned = b.WhitePins[origin]
+	}else{
+		_, isPiecePinned = b.BlackPins[origin]
+		
+	}
+	if isPiecePinned {
+		return moves
+	}
 
 	for _, delta := range knightMoves{
 		dest := origin + delta

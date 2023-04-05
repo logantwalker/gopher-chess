@@ -20,6 +20,10 @@ var (
 	BlackRookStartSquares []Square = []Square{A8,H8}
 )
 
+type Pin struct {
+	Delta int8
+}
+
 
 type Board struct {
 	// history 		[]MoveRecord
@@ -28,7 +32,9 @@ type Board struct {
 	WhiteCastle 	int8
 	BlackCastle 	int8
 	WhiteAttacks	map[int8]bool
+	WhitePins		map[int8]Pin
 	BlackAttacks	map[int8]bool
+	BlackPins		map[int8]Pin
 	KingLocations	[]int8
 	EnPassant 		Square
 	HalfMoveClock 	int
@@ -42,7 +48,9 @@ func NewBoard(fen string) Board {
 	b.KingLocations = append(b.KingLocations,int8(WhiteKingStartSquare))
 	b.KingLocations = append(b.KingLocations,int8(BlackKingStartSquare))
 	b.WhiteAttacks = map[int8]bool{}
+	b.WhitePins = map[int8]Pin{}
 	b.BlackAttacks = map[int8]bool{}
+	b.BlackPins = map[int8]Pin{}
 
 	if err != nil{
 		log.Fatal(err.Error())

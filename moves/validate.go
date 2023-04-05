@@ -2,6 +2,7 @@ package moves
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/logantwalker/gopher-chess/board"
 )
@@ -19,6 +20,18 @@ func ValidateUserMove(b *board.Board, move Move) (Move, error){
 }
 
 func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Move) []Move {
+	var isPiecePinned bool
+	var pin board.Pin
+	if b.Turn == board.White{
+		pin, isPiecePinned = b.WhitePins[origin]
+	}else{
+		pin, isPiecePinned = b.BlackPins[origin]
+	}
+
+	if isPiecePinned && !(pin.Delta == delta || pin.Delta == -1 *delta) {
+		return moves
+	}
+
 	for i := origin + delta; board.LegalSquare(i); i += delta{
 		if b.State[i] == board.Empty{
 			move := createMove(origin, i)
@@ -170,28 +183,52 @@ func kingPsuedoAttacks(b *board.Board, origin int8){
 }
 
 func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
+	searchingForPin := false
+	var pinLocation int8
 	for i := origin + delta; board.LegalSquare(i); i += delta{
-		if b.State[i] == board.Empty{
-			if b.Turn == board.White{
-				if _,exists := b.WhiteAttacks[i]; !exists{
-					b.WhiteAttacks[i] = true
+		if !searchingForPin{
+			if b.State[i] == board.Empty{
+				if b.Turn == board.White{
+					if _,exists := b.WhiteAttacks[i]; !exists{
+						b.WhiteAttacks[i] = true
+					}
+				}else{
+					if _,exists := b.BlackAttacks[i]; !exists{
+						b.BlackAttacks[i] = true
+					}
 				}
 			}else{
-				if _,exists := b.BlackAttacks[i]; !exists{
-					b.BlackAttacks[i] = true
+				if b.Turn == board.White{
+					if _,exists := b.WhiteAttacks[i]; !exists{
+						b.WhiteAttacks[i] = true
+					}
+				}else{
+					if _,exists := b.BlackAttacks[i]; !exists{
+						b.BlackAttacks[i] = true
+					}
 				}
+				searchingForPin = true
+				pinLocation = i
 			}
 		}else{
-			if b.Turn == board.White{
-				if _,exists := b.WhiteAttacks[i]; !exists{
-					b.WhiteAttacks[i] = true
-				}
-			}else{
-				if _,exists := b.BlackAttacks[i]; !exists{
-					b.BlackAttacks[i] = true
-				}
+			if (b.Turn == board.White && b.State[i] != board.Empty && b.State[i] != board.BlackKing){
+				break
 			}
-			break
+			if (b.Turn == board.Black && b.State[i] != board.Empty && b.State[i] != board.WhiteKing){
+				break
+			}
+			if b.Turn == board.White && b.State[i] == board.BlackKing{
+				fmt.Println("pin detected")
+				pin := board.Pin{Delta: delta,}
+				b.BlackPins[pinLocation] = pin
+				break
+			}
+			if b.Turn == board.Black && b.State[i] == board.WhiteKing{
+				fmt.Println("pin detected")
+				pin := board.Pin{Delta: delta,}
+				b.WhitePins[pinLocation] = pin
+				break
+			}
 		}
 	}
 }

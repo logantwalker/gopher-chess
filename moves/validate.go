@@ -210,10 +210,21 @@ func checkCastlingAvailability(b *board.Board) []bool {
 		}
 
 		if castleRights[0] && b.State[whiteKingSideCastlingSquares[0]] == board.Empty && b.State[whiteKingSideCastlingSquares[1]] == board.Empty{
-			castleAbility[0] = true
+			_,sq1Attacked := b.BlackAttacks[int8(whiteKingSideCastlingSquares[0])]
+			_,sq2Attacked := b.BlackAttacks[int8(whiteKingSideCastlingSquares[1])]
+
+			if !sq1Attacked && !sq2Attacked{
+				castleAbility[0] = true
+			}
 		}
 		if castleRights[1] && b.State[whiteQueenSideCastlingSquares[0]] == board.Empty && b.State[whiteQueenSideCastlingSquares[1]] == board.Empty && b.State[whiteQueenSideCastlingSquares[2]] == board.Empty{
-			castleAbility[1] = true
+			_,sq1Attacked := b.BlackAttacks[int8(whiteQueenSideCastlingSquares[0])]
+			_,sq2Attacked := b.BlackAttacks[int8(whiteQueenSideCastlingSquares[1])]
+			_,sq3Attacked := b.BlackAttacks[int8(whiteQueenSideCastlingSquares[2])]
+
+			if !sq1Attacked && !sq2Attacked && !sq3Attacked{
+				castleAbility[1] = true
+			}
 		}
 	}else{
 		if (b.BlackCastle & 1) > 0 {
@@ -224,10 +235,21 @@ func checkCastlingAvailability(b *board.Board) []bool {
 		}
 
 		if castleRights[0] && b.State[blackKingSideCastlingSquares[0]] == board.Empty && b.State[blackKingSideCastlingSquares[1]] == board.Empty{
-			castleAbility[0] = true
+			_,sq1Attacked := b.WhiteAttacks[int8(blackKingSideCastlingSquares[0])]
+			_,sq2Attacked := b.WhiteAttacks[int8(blackKingSideCastlingSquares[1])]
+
+			if !sq1Attacked && !sq2Attacked{
+				castleAbility[0] = true
+			}
 		}
 		if castleRights[1] && b.State[blackQueenSideCastlingSquares[0]] == board.Empty && b.State[blackQueenSideCastlingSquares[1]] == board.Empty && b.State[blackQueenSideCastlingSquares[2]] == board.Empty{
-			castleAbility[1] = true
+			_,sq1Attacked := b.WhiteAttacks[int8(blackQueenSideCastlingSquares[0])]
+			_,sq2Attacked := b.WhiteAttacks[int8(blackQueenSideCastlingSquares[1])]
+			_,sq3Attacked := b.WhiteAttacks[int8(blackQueenSideCastlingSquares[2])]
+
+			if !sq1Attacked && !sq2Attacked && !sq3Attacked{
+				castleAbility[1] = true
+			}
 		}
 	}
 

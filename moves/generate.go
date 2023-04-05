@@ -1,8 +1,6 @@
 package moves
 
 import (
-	"fmt"
-
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -213,12 +211,14 @@ func generateKnightMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-// regarding king moves, I need to check king safety in the future before alowing a move.
 func generateKingMoves(b *board.Board, origin int8) []Move {
 	var moves []Move
 	for _, delta := range kingMoves{
 		dest := origin + delta
 		if b.Turn == board.White{
+			if _,isSqAttacked := b.BlackAttacks[dest]; isSqAttacked{
+				continue
+			}
 			if delta == 2*moveRight || delta == 2*moveLeft {
 				canCastle := checkCastlingAvailability(b)
 				if canCastle[0] && delta == 2*moveRight{
@@ -241,6 +241,9 @@ func generateKingMoves(b *board.Board, origin int8) []Move {
 				}
 			}
 		}else{
+			if _,isSqAttacked := b.WhiteAttacks[dest]; isSqAttacked{
+				continue
+			}
 			if delta == 2*moveRight || delta == 2*moveLeft {
 				canCastle := checkCastlingAvailability(b)
 				if canCastle[0] && delta == 2*moveRight{
@@ -361,7 +364,5 @@ func generateAttacksList(b *board.Board){
 			}
 		}
 	}
-	fmt.Println(b.WhiteAttacks)
-	fmt.Println(b.BlackAttacks)
 }
 

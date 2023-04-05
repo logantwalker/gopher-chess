@@ -19,7 +19,7 @@ func ValidateUserMove(b *board.Board, move Move) (Move, error){
 }
 
 func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Move) []Move {
-	for i := origin; board.LegalSquare(i); i += delta{
+	for i := origin + delta; board.LegalSquare(i); i += delta{
 		if b.State[i] == board.Empty{
 			move := createMove(origin, i)
 			move.MovedPiece = b.State[origin]
@@ -36,9 +36,9 @@ func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Mov
 			move.MovedPiece = b.State[origin]
 			moves = append(moves, move)
 			break
-		}else if b.State[i] > board.Empty && b.Turn == board.White && i != origin{
+		}else if b.State[i] > board.Empty && b.Turn == board.White{
 			break
-		}else if b.State[i] < board.Empty && b.Turn == board.Black && i != origin{
+		}else if b.State[i] < board.Empty && b.Turn == board.Black{
 			break
 		}
 	}

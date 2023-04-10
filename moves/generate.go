@@ -72,7 +72,7 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 		if b.EnPassant != 0{
 			// check left of black pawn
 			if b.State[int8(b.EnPassant) - (nextRank + nextFile)] == board.WhitePawn && (int8(b.EnPassant) - (nextRank + nextFile) == origin){
-				if isPinned && pin.Delta == moveUpandRight || pin.Delta == -1*moveUpandRight || !isPinned{
+				if isPinned && (pin.Delta == moveUpandRight || pin.Delta == -1*moveUpandRight) || !isPinned{
 					move := createMove(int8(b.EnPassant) - (nextRank + nextFile), int8(b.EnPassant))
 					move.MovedPiece = board.WhitePawn
 					move.Type = moveEnPassant
@@ -92,45 +92,47 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 
 		for _, delta := range whitePawnMoves{
 			dest := origin + delta
-			if delta == moveUpandLeft || delta == moveUpandRight{
-				validateAttacks := checkPawnAttacks(b, origin)
-
-				if delta == moveUpandLeft && validateAttacks[0]{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.WhitePawn
-					move.Capture = b.State[dest]
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.WhiteQueen
+			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned{
+				if delta == moveUpandLeft || delta == moveUpandRight{
+					validateAttacks := checkPawnAttacks(b, origin)
+	
+					if delta == moveUpandLeft && validateAttacks[0]{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.WhitePawn
+						move.Capture = b.State[dest]
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.WhiteQueen
+						}
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
-				}
-
-				if delta == moveUpandRight && validateAttacks[1]{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.WhitePawn
-					move.Capture = b.State[dest]
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.WhiteQueen
+	
+					if delta == moveUpandRight && validateAttacks[1]{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.WhitePawn
+						move.Capture = b.State[dest]
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.WhiteQueen
+						}
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
-				}
-			}else if delta == 2*moveUp{
-				if rank:= board.Rank(origin); rank == whitePawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveDown] == board.Empty{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.WhitePawn
-					moves = append(moves, move)
-				}
-			}else{
-				if b.State[dest] == board.Empty{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.WhitePawn
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.WhiteQueen
+				}else if delta == 2*moveUp{
+					if rank:= board.Rank(origin); rank == whitePawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveDown] == board.Empty{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.WhitePawn
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
+				}else{
+					if b.State[dest] == board.Empty{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.WhitePawn
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.WhiteQueen
+						}
+						moves = append(moves, move)
+					}
 				}
 			}
 		}
@@ -159,45 +161,47 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 		
 		for _, delta := range blackPawnMoves{
 			dest := origin + delta
-			if delta == moveDownandLeft || delta == moveDownandRight{
-				validateAttacks := checkPawnAttacks(b, origin)
-
-				if delta == moveDownandLeft && validateAttacks[0]{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.BlackPawn
-					move.Capture = b.State[dest]
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.BlackQueen
+			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned{
+				if delta == moveDownandLeft || delta == moveDownandRight{
+					validateAttacks := checkPawnAttacks(b, origin)
+	
+					if delta == moveDownandLeft && validateAttacks[0]{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.BlackPawn
+						move.Capture = b.State[dest]
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.BlackQueen
+						}
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
-				}
-
-				if delta == moveDownandRight && validateAttacks[1]{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.BlackPawn
-					move.Capture = b.State[dest]
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.BlackQueen
+	
+					if delta == moveDownandRight && validateAttacks[1]{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.BlackPawn
+						move.Capture = b.State[dest]
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.BlackQueen
+						}
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
-				}
-			}else if delta == 2*moveDown{
-				if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.BlackPawn
-					moves = append(moves, move)
-				}
-			}else{
-				if b.State[dest] == board.Empty{
-					move := createMove(origin,dest)
-					move.MovedPiece = board.BlackPawn
-					if board.Rank(dest) == 7{
-						move.Type = movePromote
-						move.Promotion = board.BlackQueen
+				}else if delta == 2*moveDown{
+					if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.BlackPawn
+						moves = append(moves, move)
 					}
-					moves = append(moves, move)
+				}else{
+					if b.State[dest] == board.Empty{
+						move := createMove(origin,dest)
+						move.MovedPiece = board.BlackPawn
+						if board.Rank(dest) == 7{
+							move.Type = movePromote
+							move.Promotion = board.BlackQueen
+						}
+						moves = append(moves, move)
+					}
 				}
 			}
 		}

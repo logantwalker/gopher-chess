@@ -1,6 +1,8 @@
 package moves
 
 import (
+	"fmt"
+
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -65,6 +67,10 @@ func GenerateMovesList(b *board.Board) []Move {
 
 	if b.Check != nil {
 		moves = generateMovesWhileInCheck(b, moves)
+		if len(moves) == 0{
+			b.Status = board.StatusCheckmate
+			fmt.Println("Checkmate!")
+		}
 	}
 	return moves
 }
@@ -106,6 +112,15 @@ func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
 		}
 	}
 
+	//find legal king moves
+	var kingMoves []Move
+	if b.Turn == board.White{
+		kingMoves = generateKingMoves(b, b.KingLocations[0])
+	}else{
+		kingMoves = generateKingMoves(b, b.KingLocations[1])
+	}
+
+	legalMoves = append(legalMoves, kingMoves...)
 	return legalMoves
 
 }

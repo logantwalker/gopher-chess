@@ -18,6 +18,9 @@ var (
 
 	BlackKingStartSquare 	Square = E8
 	BlackRookStartSquares []Square = []Square{A8,H8}
+
+	StatusNormal int8 = 0
+	StatusCheckmate int = 1
 )
 
 type Pin struct {
@@ -46,6 +49,7 @@ type Board struct {
 	HalfMoveClock 	int
 	FullMoveClock	int
 	Ply 			int
+	Status 			int
 }
 
 func NewBoard(fen string) Board {

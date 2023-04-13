@@ -24,6 +24,11 @@ type Pin struct {
 	Delta int8
 }
 
+type Check struct {
+	AttackerOrigin 	int8
+	AttackerDelta 	int8
+}
+
 
 type Board struct {
 	// history 		[]MoveRecord
@@ -31,11 +36,12 @@ type Board struct {
 	Turn 			int8
 	WhiteCastle 	int8
 	BlackCastle 	int8
-	WhiteAttacks	map[int8]bool
+	WhiteAttacks	map[int8]int8
 	WhitePins		map[int8]Pin
-	BlackAttacks	map[int8]bool
+	BlackAttacks	map[int8]int8
 	BlackPins		map[int8]Pin
 	KingLocations	[]int8
+	Check			*Check
 	EnPassant 		Square
 	HalfMoveClock 	int
 	FullMoveClock	int
@@ -47,9 +53,9 @@ func NewBoard(fen string) Board {
 
 	b.KingLocations = append(b.KingLocations,int8(WhiteKingStartSquare))
 	b.KingLocations = append(b.KingLocations,int8(BlackKingStartSquare))
-	b.WhiteAttacks = map[int8]bool{}
+	b.WhiteAttacks = map[int8]int8{}
 	b.WhitePins = map[int8]Pin{}
-	b.BlackAttacks = map[int8]bool{}
+	b.BlackAttacks = map[int8]int8{}
 	b.BlackPins = map[int8]Pin{}
 
 	if err != nil{

@@ -58,7 +58,7 @@ type Move struct{
 	MovedPiece 	int8
 	Type 		int8
 	Promotion 	int8
-	Pin 		*board.Pin
+	// Pin 		*board.Pin
 }
 
 func CreateMoveFromInput(input string) (Move, error) {

@@ -62,7 +62,52 @@ func GenerateMovesList(b *board.Board) []Move {
 		}
 		moves = append(moves, availableMoves...)
 	}
+
+	if b.Check != nil {
+		moves = generateMovesWhileInCheck(b, moves)
+	}
 	return moves
+}
+
+func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
+	attacker := b.State[b.Check.AttackerOrigin]
+	attackDelta := b.Check.AttackerDelta
+
+	var legalMoves []Move
+	if b.Turn == board.White {
+		if attacker == board.BlackRook || attacker == board.BlackQueen || attacker == board.BlackBishop {
+			blockSquares := findBlockingSquares(b.Check.AttackerOrigin, b.KingLocations[0], attackDelta)
+
+			for _, sq := range blockSquares {
+				for _, move := range moves{
+					if int8(move.To) == sq{
+						legalMoves = append(legalMoves, move)
+					}
+				}
+			}
+		}
+	}else{
+		if attacker == board.WhiteRook || attacker == board.WhiteQueen || attacker == board.WhiteBishop {
+			blockSquares := findBlockingSquares(b.Check.AttackerOrigin, b.KingLocations[1], attackDelta)
+			for _, sq := range blockSquares {
+				for _, move := range moves{
+					if int8(move.To) == sq{
+						legalMoves = append(legalMoves, move)
+					}
+				}
+			}
+		}
+	}
+
+	//find captures
+	for _, move := range moves{
+		if int8(move.To) == b.Check.AttackerOrigin && move.Capture == attacker{
+			legalMoves = append(legalMoves, move)
+		}
+	}
+
+	return legalMoves
+
 }
 
 func generatePawnMoves(b *board.Board, origin int8) []Move {
@@ -92,7 +137,7 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 
 		for _, delta := range whitePawnMoves{
 			dest := origin + delta
-			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned{
+			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned {
 				if delta == moveUpandLeft || delta == moveUpandRight{
 					validateAttacks := checkPawnAttacks(b, origin)
 	
@@ -161,7 +206,7 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 		
 		for _, delta := range blackPawnMoves{
 			dest := origin + delta
-			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned{
+			if isPinned && (pin.Delta == delta || pin.Delta == -1*delta) || !isPinned {
 				if delta == moveDownandLeft || delta == moveDownandRight{
 					validateAttacks := checkPawnAttacks(b, origin)
 	

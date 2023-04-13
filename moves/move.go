@@ -211,6 +211,13 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 
 		b.HalfMoveClock = 0
 	}
+
+	if b.Turn == board.White{
+		b.WhiteAttacks = map[int8]int8{}
+	}else{
+		b.BlackAttacks = map[int8]int8{}
+	}
+
 	generateAttacksList(b)
 
 	b.Ply ++

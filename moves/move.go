@@ -218,6 +218,10 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 		b.BlackAttacks = map[int8]int8{}
 	}
 
+	if b.Check != nil && b.Status != board.StatusCheckmate{
+		b.Check = nil
+	}
+
 	generateAttacksList(b)
 
 	b.Ply ++

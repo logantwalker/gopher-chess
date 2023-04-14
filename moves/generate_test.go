@@ -292,13 +292,13 @@ func TestPawnMoves(t *testing.T){
 			t.Errorf("expected queen promotion, got %d", moves[0].Promotion)
 		}
 		if moves[1].Promotion != b.Turn * board.Rook{
-			t.Errorf("expected rook promotion, got %d", moves[0].Promotion)
+			t.Errorf("expected rook promotion, got %d", moves[1].Promotion)
 		}
 		if moves[2].Promotion != b.Turn * board.Bishop{
-			t.Errorf("expected bishop promotion, got %d", moves[0].Promotion)
+			t.Errorf("expected bishop promotion, got %d", moves[2].Promotion)
 		}
 		if moves[3].Promotion != b.Turn * board.Knight{
-			t.Errorf("expected knight promotion, got %d", moves[0].Promotion)
+			t.Errorf("expected knight promotion, got %d", moves[3].Promotion)
 		}
 	}
 

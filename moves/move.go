@@ -61,8 +61,13 @@ type Move struct{
 	// Pin 		*board.Pin
 }
 
-func CreateMoveFromInput(input string) (Move, error) {
+func CreateMoveFromInput(b *board.Board, input string) (Move, error) {
 	input = strings.Trim(input, " ")
+	var promotion string
+	if len(input) == 5 {
+		promotion = string(input[len(input) - 1])
+		input = strings.TrimSuffix(input, promotion)
+	}
 	if m, _ := regexp.MatchString("^[a-h][1-8][a-h][1-8]$", input); !m {
 		return Move{}, errors.New("invalid move")
 	}
@@ -71,6 +76,19 @@ func CreateMoveFromInput(input string) (Move, error) {
 	to := board.SquareStringToHex[input[2:]]
 
 	var move Move = Move{From: from, To: to}
+	if len(promotion) > 0 {
+		move.Type = movePromote
+		switch promotion {
+		case "q":
+			move.Promotion = b.Turn * board.Queen
+		case "r":
+			move.Promotion = b.Turn * board.Rook
+		case "b":
+			move.Promotion = b.Turn * board.Bishop
+		case "n":
+			move.Promotion = b.Turn * board.Knight
+		}
+	}
 	return move, nil
 }
 

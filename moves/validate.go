@@ -11,9 +11,15 @@ func ValidateUserMove(b *board.Board, move Move) (Move, error){
 	validMoves := GenerateMovesList(b)
 
 	for _, validMove := range validMoves{
-		if validMove.To == move.To && validMove.From == move.From{
-			return validMove, nil
-		}
+		if move.Type == movePromote{
+			if validMove.To == move.To && validMove.From == move.From && validMove.Promotion == move.Promotion{
+				return validMove, nil
+			}
+		}else{
+			if validMove.To == move.To && validMove.From == move.From{
+				return validMove, nil
+			}
+		}	
 	}
 
 	return Move{}, errors.New("invalid move")
@@ -69,11 +75,16 @@ func checkPawnAttacks(b *board.Board, origin int8) []bool{
 			attacks[1] = true
 		}
 	}else{
-		if b.State[origin + moveDownandLeft] > int8(0) {
-			attacks[0] = true
+		if board.LegalSquare(origin + moveDownandLeft) {
+			if b.State[origin + moveDownandLeft] > int8(0) {
+				attacks[0] = true
+			}
+			
 		}
-		if b.State[origin + moveDownandRight] > int8(0) {
-			attacks[1] = true
+		if board.LegalSquare(origin + moveDownandRight) {
+			if b.State[origin + moveDownandRight] > int8(0) {
+				attacks[1] = true
+			}
 		}
 	}
 

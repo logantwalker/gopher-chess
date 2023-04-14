@@ -162,9 +162,12 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 						move.Capture = b.State[dest]
 						if board.Rank(dest) == 7{
 							move.Type = movePromote
-							move.Promotion = board.WhiteQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
+						
 					}
 	
 					if delta == moveUpandRight && validateAttacks[1]{
@@ -173,9 +176,11 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 						move.Capture = b.State[dest]
 						if board.Rank(dest) == 7{
 							move.Type = movePromote
-							move.Promotion = board.WhiteQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
 					}
 				}else if delta == 2*moveUp{
 					if rank:= board.Rank(origin); rank == whitePawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveDown] == board.Empty{
@@ -189,9 +194,11 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 						move.MovedPiece = board.WhitePawn
 						if board.Rank(dest) == 7{
 							move.Type = movePromote
-							move.Promotion = board.WhiteQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
 					}
 				}
 			}
@@ -229,22 +236,27 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 						move := createMove(origin,dest)
 						move.MovedPiece = board.BlackPawn
 						move.Capture = b.State[dest]
-						if board.Rank(dest) == 7{
+						if board.Rank(dest) == 0{
 							move.Type = movePromote
-							move.Promotion = board.BlackQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
+						
 					}
 	
 					if delta == moveDownandRight && validateAttacks[1]{
 						move := createMove(origin,dest)
 						move.MovedPiece = board.BlackPawn
 						move.Capture = b.State[dest]
-						if board.Rank(dest) == 7{
+						if board.Rank(dest) == 0{
 							move.Type = movePromote
-							move.Promotion = board.BlackQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
 					}
 				}else if delta == 2*moveDown{
 					if rank:= board.Rank(origin); rank == blackPawnStartRank && b.State[dest] == board.Empty && b.State[dest + moveUp] == board.Empty{
@@ -256,11 +268,13 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 					if b.State[dest] == board.Empty{
 						move := createMove(origin,dest)
 						move.MovedPiece = board.BlackPawn
-						if board.Rank(dest) == 7{
+						if board.Rank(dest) == 0{
 							move.Type = movePromote
-							move.Promotion = board.BlackQueen
+							promoMoves := generatePawnPromotions(b, move)
+							moves = append(moves, promoMoves...)
+						}else{
+							moves = append(moves, move)
 						}
-						moves = append(moves, move)
 					}
 				}
 			}
@@ -268,6 +282,28 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 	}
 
 	return moves
+}
+
+func generatePawnPromotions(b *board.Board, base Move) []Move {
+	var moves []Move
+	if b.Turn == board.White{
+		promotions := []int8{board.WhiteQueen, board.WhiteRook, board.WhiteBishop, board.WhiteKnight}
+		for _, option := range promotions{
+			move := base
+			move.Promotion = option
+			moves = append(moves, move)
+		}
+	}else{
+		promotions := []int8{board.BlackQueen, board.BlackRook, board.BlackBishop, board.BlackKnight}
+		for _, option := range promotions{
+			move := base
+			move.Promotion = option
+			moves = append(moves, move)
+		}
+	}
+
+	return moves
+
 }
 
 func generateKnightMoves(b *board.Board, origin int8) []Move {

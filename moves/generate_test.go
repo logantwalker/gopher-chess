@@ -242,4 +242,64 @@ func TestPawnMoves(t *testing.T){
 		t.Errorf("expected move to e4, got %s", board.SquareHexToString[moves[0].To])
 	}
 
+	// testing promotions - white
+	b = board.NewBoard("8/PPPPPPPP/8/8/8/3K4/8/3k4 w - - 0 1")
+
+	for sq := board.A7; board.LegalSquare(int8(sq)); sq += board.Square(nextFile){
+		moves = generatePawnMoves(&b, int8(sq))
+
+		if len(moves) != 4{
+			t.Errorf("expected 4 moves, generated %d", len(moves))
+		}
+
+		for _, move := range moves {
+			if move.Type != movePromote{
+				t.Errorf("expected promotion move type, got %d", move.Type)
+			}
+		}
+
+		if moves[0].Promotion != b.Turn * board.Queen{
+			t.Errorf("expected queen promotion, got %d", moves[0].Promotion)
+		}
+		if moves[1].Promotion != b.Turn * board.Rook{
+			t.Errorf("expected rook promotion, got %d", moves[0].Promotion)
+		}
+		if moves[2].Promotion != b.Turn * board.Bishop{
+			t.Errorf("expected bishop promotion, got %d", moves[0].Promotion)
+		}
+		if moves[3].Promotion != b.Turn * board.Knight{
+			t.Errorf("expected knight promotion, got %d", moves[0].Promotion)
+		}
+	}
+
+	// testing promotions - black
+	b = board.NewBoard("8/8/8/3K4/8/3k4/pppppppp/8 b - - 0 1")
+
+	for sq := board.A2; board.LegalSquare(int8(sq)); sq += board.Square(nextFile){
+		moves = generatePawnMoves(&b, int8(sq))
+
+		if len(moves) != 4{
+			t.Errorf("expected 4 moves, generated %d", len(moves))
+		}
+
+		for _, move := range moves {
+			if move.Type != movePromote{
+				t.Errorf("expected promotion move type, got %d", move.Type)
+			}
+		}
+
+		if moves[0].Promotion != b.Turn * board.Queen{
+			t.Errorf("expected queen promotion, got %d", moves[0].Promotion)
+		}
+		if moves[1].Promotion != b.Turn * board.Rook{
+			t.Errorf("expected rook promotion, got %d", moves[0].Promotion)
+		}
+		if moves[2].Promotion != b.Turn * board.Bishop{
+			t.Errorf("expected bishop promotion, got %d", moves[0].Promotion)
+		}
+		if moves[3].Promotion != b.Turn * board.Knight{
+			t.Errorf("expected knight promotion, got %d", moves[0].Promotion)
+		}
+	}
+
 }

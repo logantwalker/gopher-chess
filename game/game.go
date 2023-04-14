@@ -32,10 +32,9 @@ func (g *Game) Run(){
 
 		if input == "quit" || input == "q"{
 			break
-		}else if  m, err := moves.CreateMoveFromInput(input); err == nil{
+		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
 			moves.MakeMove(&g.board,m)
 			g.board.PrintBoard()
-			fmt.Println("check: ", g.board.Check)
 		}
 		
 		switch input {

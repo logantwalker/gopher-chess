@@ -302,4 +302,26 @@ func TestPawnMoves(t *testing.T){
 		}
 	}
 
+	// testing checkmate with pawn - white
+	b = board.NewBoard("3bkb2/3ppp2/6P1/8/8/4PQ2/PPPP1P1P/RNB1KBNR w KQ - 0 1")
+	setupMove = Move{From: board.G6, To: board.F7}
+	MakeMove(&b, setupMove)
+
+	moves = GenerateMovesList(&b)
+
+	if len(moves) != 0{
+		t.Errorf("error delivering pawn checkmate")
+	}
+
+	// testing checkmate with pawn - black
+	b = board.NewBoard("4k3/5q2/8/8/8/6p1/3PPP2/3BKB2 b - - 0 1")
+	setupMove = Move{From: board.G3, To: board.F2}
+	MakeMove(&b, setupMove)
+
+	moves = GenerateMovesList(&b)
+
+	if len(moves) != 0{
+		t.Errorf("error delivering pawn checkmate")
+	}
+
 }

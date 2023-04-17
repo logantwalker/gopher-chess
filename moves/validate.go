@@ -92,11 +92,11 @@ func checkPawnAttacks(b *board.Board, origin int8) []bool{
 }
 
 func pawnPsuedoAttacks(b *board.Board, origin int8) {
-	if b.Turn == board.White{
+	if b.State[origin] > 0 {
 		if board.LegalSquare(origin + nextFile + nextRank) {
 			if _,exists := b.WhiteAttacks[origin + nextFile + nextRank]; !exists {
 				b.WhiteAttacks[origin + nextFile + nextRank] = origin
-				if b.State[origin + nextFile + nextRank] == board.BlackKing{
+				if b.State[origin + nextFile + nextRank] == board.BlackKing {
 					b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile + nextRank}
 				}
 			}
@@ -133,7 +133,7 @@ func knightPsuedoAttacks(b *board.Board, origin int8) {
 	for _, move := range knightMoves{
 		dest := origin + move 
 		if board.LegalSquare(dest){
-			if b.Turn == board.White{
+			if b.State[origin] > 0 {
 				if _,exists := b.WhiteAttacks[dest]; !exists{
 					b.WhiteAttacks[dest] = origin
 					if b.State[dest] == board.BlackKing{
@@ -217,7 +217,7 @@ func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
 	for i := origin + delta; board.LegalSquare(i); i += delta{
 		if !searchingForPin{
 			if b.State[i] == board.Empty{
-				if b.Turn == board.White{
+				if b.State[origin] > 0{
 					if _,exists := b.WhiteAttacks[i]; !exists{
 						b.WhiteAttacks[i] = origin
 					}
@@ -227,7 +227,7 @@ func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
 					}
 				}
 			}else{
-				if b.Turn == board.White{
+				if b.State[origin] > 0 {
 					if _,exists := b.WhiteAttacks[i]; !exists{
 						b.WhiteAttacks[i] = origin
 						if b.State[i] == board.BlackKing{
@@ -246,19 +246,19 @@ func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
 				pinLocation = i
 			}
 		}else{
-			if (b.Turn == board.White && b.State[i] != board.Empty && b.State[i] != board.BlackKing){
+			if (b.State[origin] > 0 && b.State[i] != board.Empty && b.State[i] != board.BlackKing){
 				break
 			}
-			if (b.Turn == board.Black && b.State[i] != board.Empty && b.State[i] != board.WhiteKing){
+			if (b.State[origin] < 0 && b.State[i] != board.Empty && b.State[i] != board.WhiteKing){
 				break
 			}
-			if b.Turn == board.White && b.State[i] == board.BlackKing{
+			if b.State[origin] > 0 && b.State[i] == board.BlackKing{
 				fmt.Println("pin detected")
 				pin := board.Pin{Delta: delta,}
 				b.BlackPins[pinLocation] = pin
 				break
 			}
-			if b.Turn == board.Black && b.State[i] == board.WhiteKing{
+			if b.State[origin] < 0 && b.State[i] == board.WhiteKing{
 				fmt.Println("pin detected")
 				pin := board.Pin{Delta: delta,}
 				b.WhitePins[pinLocation] = pin

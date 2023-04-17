@@ -451,40 +451,37 @@ func generateAttacksList(b *board.Board){
 		if b.State[square] != 0 {
 			piece := b.State[square]
 
-			switch b.Turn {
-			case board.White:
-				if piece > 0 {
-					switch piece {
-					case board.WhitePawn:
-						pawnPsuedoAttacks(b,square)
-					case board.WhiteKnight:
-						knightPsuedoAttacks(b,square)
-					case board.WhiteBishop:
-						bishopPsuedoAttacks(b, square)
-					case board.WhiteRook:
-						rookPsuedoAttacks(b,square)
-					case board.WhiteQueen:
-						queenPsuedoAttacks(b,square)
-					case board.WhiteKing:
-						kingPsuedoAttacks(b,square)
-					}
+			if piece > 0 {
+				switch piece {
+				case board.WhitePawn:
+					pawnPsuedoAttacks(b,square)
+				case board.WhiteKnight:
+					knightPsuedoAttacks(b,square)
+				case board.WhiteBishop:
+					bishopPsuedoAttacks(b, square)
+				case board.WhiteRook:
+					rookPsuedoAttacks(b,square)
+				case board.WhiteQueen:
+					queenPsuedoAttacks(b,square)
+				case board.WhiteKing:
+					kingPsuedoAttacks(b,square)
 				}
-			case board.Black:
-				if piece < 0 {
-					switch piece {
-					case board.BlackPawn:
-						pawnPsuedoAttacks(b,square)
-					case board.BlackKnight:
-						knightPsuedoAttacks(b,square)
-					case board.BlackBishop:
-						bishopPsuedoAttacks(b, square)
-					case board.BlackRook:
-						rookPsuedoAttacks(b,square)
-					case board.BlackQueen:
-						queenPsuedoAttacks(b,square)
-					case board.BlackKing:
-						kingPsuedoAttacks(b,square)
-					}
+			}
+
+			if piece < 0 {
+				switch piece {
+				case board.BlackPawn:
+					pawnPsuedoAttacks(b,square)
+				case board.BlackKnight:
+					knightPsuedoAttacks(b,square)
+				case board.BlackBishop:
+					bishopPsuedoAttacks(b, square)
+				case board.BlackRook:
+					rookPsuedoAttacks(b,square)
+				case board.BlackQueen:
+					queenPsuedoAttacks(b,square)
+				case board.BlackKing:
+					kingPsuedoAttacks(b,square)
 				}
 			}
 		}

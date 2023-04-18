@@ -600,5 +600,78 @@ func TestBishopMoveGeneration(t *testing.T){
 	if moves[2].Capture != board.WhiteQueen {
 		t.Errorf("failed to capture pinning piece")
 	}
+}
+
+func TestRookMoveGeneration(t *testing.T) {
+
+	// starting position - white
+	b := board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	moves := generateRookMoves(&b, int8(board.WhiteRookStartSquares[0]))
+	if len(moves) != 0{
+		t.Errorf("white rooks passing through pawns/pieces")
+	}
+	moves = generateRookMoves(&b, int8(board.WhiteRookStartSquares[1]))
+	if len(moves) != 0{
+		t.Errorf("white rooks passing through pawns/pieces")
+	}
+
+	// starting position - black
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")
+	moves = generateRookMoves(&b, int8(board.BlackRookStartSquares[0]))
+	if len(moves) != 0{
+		t.Errorf("black rooks passing through pawns/pieces")
+	}
+	moves = generateRookMoves(&b, int8(board.BlackRookStartSquares[1]))
+	if len(moves) != 0{
+		t.Errorf("black rooks passing through pawns/pieces")
+	}
+
+	// open board - white
+	b = board.NewBoard("4k3/8/8/3R4/8/8/8/4K3 w - - 0 1")
+	moves = generateRookMoves(&b, int8(board.D5))
+	if len(moves) != 14{
+		t.Errorf("white rook: expected 14 moves, generated %d", len(moves))
+	}
+
+	// open board - white
+	b = board.NewBoard("4k3/8/8/3r4/8/8/8/4K3 b - - 0 1")
+	moves = generateRookMoves(&b, int8(board.D5))
+	if len(moves) != 14{
+		t.Errorf("black rook: expected 14 moves, generated %d", len(moves))
+	}
+
+	// edge of board - white
+	b = board.NewBoard("4k3/8/8/R7/8/8/8/4K3 w - - 0 1")
+	moves = generateRookMoves(&b, int8(board.A5))
+	if len(moves) != 14{
+		t.Errorf("white rook: expected 14 moves, generated %d", len(moves))
+	}
+
+	// edge of board - black
+	b = board.NewBoard("4k3/8/8/r7/8/8/8/4K3 w - - 0 1")
+	moves = generateRookMoves(&b, int8(board.A5))
+	if len(moves) != 14{
+		t.Errorf("black rook: expected 14 moves, generated %d", len(moves))
+	}
+
+	// pins - white
+	b = board.NewBoard("kq6/8/8/8/4R3/8/8/4K3 b - - 0 1")
+	setupMove := Move{From: board.B8, To: board.E8}
+	MakeMove(&b, setupMove)
+
+	moves = generateRookMoves(&b, int8(board.E4))
+	if len(moves) != 6{
+		t.Errorf("problem generating moves for pinned rook")
+	}
+
+	// pins - black
+	b = board.NewBoard("KQ6/8/8/8/4r3/8/8/4k3 w - - 0 1")
+	setupMove = Move{From: board.B8, To: board.E8}
+	MakeMove(&b, setupMove)
+
+	moves = generateRookMoves(&b, int8(board.E4))
+	if len(moves) != 6{
+		t.Errorf("problem generating moves for pinned rook")
+	}
 
 }

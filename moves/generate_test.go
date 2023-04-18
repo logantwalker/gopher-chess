@@ -777,3 +777,89 @@ func TestQueenMoveGeneration(t *testing.T) {
 		t.Errorf("failed to pin queen on a rank")
 	}
 }
+
+func TestKingMoveGeneration(t *testing.T) {
+	// starting position - white
+	b := board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	moves := generateKingMoves(&b, int8(board.WhiteKingStartSquare))
+	if len(moves) != 0{
+		t.Errorf("white king passing through pawns/pieces")
+	}
+
+	// starting position - black
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")
+	moves = generateKingMoves(&b, int8(board.BlackKingStartSquare))
+	if len(moves) != 0{
+		t.Errorf("black king passing through pawns/pieces")
+	}
+
+	// king-side castling - white
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQK2R w KQkq - 0 1")
+	moves = generateKingMoves(&b, int8(board.WhiteKingStartSquare))
+	if len(moves) != 3{
+		t.Errorf("expected 3 moves, generated %d", len(moves))
+	}
+
+	if moves[2].Type != moveShortCastle {
+		t.Errorf("white king: expected type = %d, got %d",moveShortCastle,moves[2].Type)
+	}
+
+	// testing losing short castling rights - white
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQK2R w KQkq - 0 1")
+	MakeMove(&b, Move{From: board.H1, To: board.G1})
+	if b.WhiteCastle != board.CastleLong{
+		t.Errorf("white king: failed to remove short castle rights")
+	}
+
+	// king-side castling - black
+	b = board.NewBoard("rnbqk2r/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQK2R b KQkq - 0 1")
+	moves = generateKingMoves(&b, int8(board.BlackKingStartSquare))
+	if len(moves) != 3{
+		t.Errorf("expected 3 moves, generated %d", len(moves))
+	}
+
+	if moves[2].Type != moveShortCastle {
+		t.Errorf("black king: expected type = %d, got %d",moveShortCastle,moves[2].Type)
+	}
+
+	// testing losing short castling rights - black
+	b = board.NewBoard("rnbqk2r/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQK2R b KQkq - 0 1")
+	MakeMove(&b, Move{From: board.H8, To: board.G8})
+	if b.BlackCastle != board.CastleLong{
+		t.Errorf("black king: failed to remove short castle rights")
+	}
+
+	// queen-side castling - white
+	b = board.NewBoard("r3kbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/R3KBNR w KQkq - 0 1")
+	moves = generateKingMoves(&b, int8(board.WhiteKingStartSquare))
+	if len(moves) != 3{
+		t.Errorf("expected 3 moves, generated %d", len(moves))
+	}
+
+	if moves[2].Type != moveLongCastle {
+		t.Errorf("white king: expected type = %d, got %d",moveLongCastle,moves[2].Type)
+	}
+
+	// test losing long castle rights - white
+	MakeMove(&b, Move{From: board.A1, To: board.B1})
+	if b.WhiteCastle != board.CastleShort {
+		t.Errorf("white king: failed to remove long castle rights")
+	}
+
+	// queen-side castling - black
+	b = board.NewBoard("r3kbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/R3KBNR b KQkq - 0 1")
+	moves = generateKingMoves(&b, int8(board.BlackKingStartSquare))
+	if len(moves) != 3{
+		t.Errorf("expected 3 moves, generated %d", len(moves))
+	}
+
+	if moves[2].Type != moveLongCastle {
+		t.Errorf("black king: expected type = %d, got %d",moveLongCastle,moves[2].Type)
+	}
+
+	// test losing long castle rights - white
+	MakeMove(&b, Move{From: board.A8, To: board.B8})
+	if b.BlackCastle != board.CastleShort {
+		t.Errorf("white king: failed to remove long castle rights")
+	}
+}

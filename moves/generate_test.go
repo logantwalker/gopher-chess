@@ -502,3 +502,103 @@ func TestKnightMoveGeneration(t *testing.T) {
 		t.Errorf("unable to deliver checkmate with black knight")
 	}
 }
+
+func TestBishopMoveGeneration(t *testing.T){
+
+	// starting position - white
+	b := board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	moves := generateBishopMoves(&b,int8(board.C1))
+	if len(moves) != 0 {
+		t.Errorf("white bishop is passing through pawns")
+	}
+
+	moves = generateBishopMoves(&b,int8(board.F1))
+	if len(moves) != 0 {
+		t.Errorf("white bishop is passing through pawns")
+	}
+
+	// starting position - black
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")
+	moves = generateBishopMoves(&b,int8(board.C8))
+	if len(moves) != 0 {
+		t.Errorf("black bishop is passing through pawns")
+	}
+
+	moves = generateBishopMoves(&b,int8(board.F8))
+	if len(moves) != 0 {
+		t.Errorf("black bishop is passing through pawns")
+	}
+
+	// open board - white
+	b = board.NewBoard("4k3/8/8/8/3BB3/8/8/4K3 w - - 0 1")
+
+	moves = generateBishopMoves(&b, int8(board.D4))
+	if len(moves) != 13 {
+		t.Errorf("expected 13 moves, generated %d", len(moves))
+	}
+	moves = generateBishopMoves(&b, int8(board.E4))
+	if len(moves) != 13 {
+		t.Errorf("expected 13 moves, generated %d", len(moves))
+	}
+
+	// open board - black
+	b = board.NewBoard("4k3/8/8/8/3bb3/8/8/4K3 b - - 0 1")
+
+	moves = generateBishopMoves(&b, int8(board.D4))
+	if len(moves) != 13 {
+		t.Errorf("expected 13 moves, generated %d", len(moves))
+	}
+	moves = generateBishopMoves(&b, int8(board.E4))
+	if len(moves) != 13 {
+		t.Errorf("expected 13 moves, generated %d", len(moves))
+	}
+
+	// edge of board - white
+	b = board.NewBoard("7k/8/8/B7/B7/8/8/7K w - - 0 1")
+	moves = generateBishopMoves(&b, int8(board.A4))
+	if len(moves) != 7 {
+		t.Errorf("expected 7 moves, generated %d", len(moves))
+	}
+	moves = generateBishopMoves(&b, int8(board.A5))
+	if len(moves) != 7 {
+		t.Errorf("expected 7 moves, generated %d", len(moves))
+	}
+
+	// edge of board - black
+	b = board.NewBoard("7k/8/8/B7/B7/8/8/7K w - - 0 1")
+	moves = generateBishopMoves(&b, int8(board.A4))
+	if len(moves) != 7 {
+		t.Errorf("expected 7 moves, generated %d", len(moves))
+	}
+	moves = generateBishopMoves(&b, int8(board.A5))
+	if len(moves) != 7 {
+		t.Errorf("expected 7 moves, generated %d", len(moves))
+	}
+
+	// pins - white
+	b = board.NewBoard("4k3/5q2/8/8/3B4/2K5/8/8 b - - 0 1")
+	setupMove := Move{From:board.F7, To: board.G7}
+	MakeMove(&b,setupMove)
+
+	moves = generateBishopMoves(&b, int8(board.D4))
+	if len(moves) != 3 {
+		t.Errorf("diagonal pin failed")
+	}
+	if moves[2].Capture != board.BlackQueen {
+		t.Errorf("failed to capture pinning piece")
+	}
+
+	// pins - black
+	b = board.NewBoard("4K3/5Q2/8/8/3b4/2k5/8/8 w - - 0 1")
+	setupMove = Move{From:board.F7, To: board.G7}
+	MakeMove(&b,setupMove)
+
+	moves = generateBishopMoves(&b, int8(board.D4))
+	if len(moves) != 3 {
+		t.Errorf("diagonal pin failed")
+	}
+	if moves[2].Capture != board.WhiteQueen {
+		t.Errorf("failed to capture pinning piece")
+	}
+
+}

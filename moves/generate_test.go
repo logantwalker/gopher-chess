@@ -675,3 +675,105 @@ func TestRookMoveGeneration(t *testing.T) {
 	}
 
 }
+
+func TestQueenMoveGeneration(t *testing.T) {
+	// starting position - white
+	b := board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	moves := generateQueenMoves(&b, int8(board.D1))
+	if len(moves) != 0{
+		t.Errorf("white queen passing through pawns/pieces")
+	}
+
+	// starting position - black
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")
+	moves = generateQueenMoves(&b, int8(board.D8))
+	if len(moves) != 0{
+		t.Errorf("black queen passing through pawns/pieces")
+	}
+
+	// open board - white
+	b = board.NewBoard("k7/8/8/8/3Q4/8/8/4K3 w - - 0 1")
+	moves = generateQueenMoves(&b, int8(board.D4))
+
+	if len(moves) != 27 {
+		t.Errorf("white queen: expected 27 moves, generated %d", len(moves))
+	}
+
+	// open board - black
+	b = board.NewBoard("k7/8/8/8/3q4/8/8/4K3 b - - 0 1")
+	moves = generateQueenMoves(&b, int8(board.D4))
+
+	if len(moves) != 27 {
+		t.Errorf("black queen: expected 27 moves, generated %d", len(moves))
+	}
+
+	// edge of board - white
+	b = board.NewBoard("k7/8/8/7Q/8/8/8/4K3 w - - 0 1")
+	moves = generateQueenMoves(&b, int8(board.H5))
+	if len(moves) != 21 {
+		t.Errorf("white queen: expected 21 moves, generator %d", len(moves))
+	}
+
+	// edge of board - black
+	b = board.NewBoard("k7/8/8/7q/8/8/8/4K3 b - - 0 1")
+	moves = generateQueenMoves(&b, int8(board.H5))
+	if len(moves) != 21 {
+		t.Errorf("black queen: expected 21 moves, generator %d", len(moves))
+	}
+
+	// pins - white
+	b = board.NewBoard("4b3/8/8/k7/4Q3/5K2/8/8 b - - 0 1")
+	setupMove:= Move{From: board.E8, To: board.C6}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 2 {
+		t.Errorf("failed to pin queen on a diagonal")
+	}
+
+	b = board.NewBoard("2r5/8/8/k7/4Q3/4K3/8/8 b - - 0 1")
+	setupMove = Move{From: board.C8, To: board.E8}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 4 {
+		t.Errorf("failed to pin queen on a file")
+	}
+
+	b = board.NewBoard("7r/8/8/k7/3KQ3/8/8/8 b - - 0 1")
+	setupMove = Move{From: board.H8, To: board.H4}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 3 {
+		t.Errorf("failed to pin queen on a rank")
+	}
+
+	// pins - black
+	b = board.NewBoard("4B3/8/8/K7/4q3/5k2/8/8 w - - 0 1")
+	setupMove= Move{From: board.E8, To: board.C6}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 2 {
+		t.Errorf("failed to pin queen on a diagonal")
+	}
+
+	b = board.NewBoard("2R5/8/8/K7/4q3/4k3/8/8 w - - 0 1")
+	setupMove = Move{From: board.C8, To: board.E8}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 4 {
+		t.Errorf("failed to pin queen on a file")
+	}
+
+	b = board.NewBoard("7R/8/8/K7/3kq3/8/8/8 w - - 0 1")
+	setupMove = Move{From: board.H8, To: board.H4}
+	MakeMove(&b, setupMove)
+
+	moves = generateQueenMoves(&b, int8(board.E4))
+	if len(moves) != 3 {
+		t.Errorf("failed to pin queen on a rank")
+	}
+}

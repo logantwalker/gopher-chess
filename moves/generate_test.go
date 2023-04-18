@@ -6,7 +6,7 @@ import (
 	"github.com/logantwalker/gopher-chess/board"
 )
 
-func TestPawnMoves(t *testing.T){
+func TestPawnMoveGeneration(t *testing.T){
 	b := board.NewBoard(board.StartingFen)
 
 	//testing starting row - white
@@ -324,4 +324,181 @@ func TestPawnMoves(t *testing.T){
 		t.Errorf("error delivering pawn checkmate")
 	}
 
+}
+
+func TestKnightMoveGeneration(t *testing.T) {
+
+	// testing starting position move generation - white
+	b := board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+	moves := generateKnightMoves(&b, int8(board.B1))
+	if len(moves) != 2{
+		t.Errorf("expected to generate 2 moves in start pos, got %d", len(moves))
+	}
+
+	moves = generateKnightMoves(&b, int8(board.G1))
+	if len(moves) != 2{
+		t.Errorf("expected to generate 2 moves in start pos, got %d", len(moves))
+	}
+	
+	// testing starting position move generation - black
+	b = board.NewBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1")
+	moves = generateKnightMoves(&b, int8(board.B8))
+	if len(moves) != 2{
+		t.Errorf("expected to generate 2 moves in start pos, got %d", len(moves))
+	}
+
+	moves = generateKnightMoves(&b, int8(board.G8))
+	if len(moves) != 2{
+		t.Errorf("expected to generate 2 moves in start pos, got %d", len(moves))
+	}
+
+	// testing open board move generation - white
+	b = board.NewBoard("4k3/8/8/8/3N4/8/8/4K3 w - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.D4))
+
+	if len(moves) != 8 {
+		t.Errorf("expected 8 moves, generated %d", len(moves))
+	}
+
+	// testing open board move generation - black
+	b = board.NewBoard("4k3/8/8/4n3/8/8/8/4K3 b - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.D4))
+
+	if len(moves) != 8 {
+		t.Errorf("expected 8 moves, generated %d", len(moves))
+	}
+
+	// testing board edge move generation - white
+	b = board.NewBoard("4k3/8/8/N7/8/8/8/4K3 w - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.A5))
+
+	if len(moves) != 4 {
+		t.Errorf("expected 4 moves, generated %d", len(moves))
+	}
+
+	b = board.NewBoard("4k3/8/8/7N/8/8/8/4K3 w - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.H5))
+
+	if len(moves) != 4 {
+		t.Errorf("expected 4 moves, generated %d", len(moves))
+	}
+
+	// testing board edge move generation - black
+	b = board.NewBoard("4k3/8/8/n7/8/8/8/4K3 b - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.A5))
+
+	if len(moves) != 4 {
+		t.Errorf("expected 4 moves, generated %d", len(moves))
+	}
+
+	b = board.NewBoard("4k3/8/8/7n/8/8/8/4K3 b - - 0 1")
+	moves = generateKnightMoves(&b, int8(board.H5))
+
+	if len(moves) != 4 {
+		t.Errorf("expected 4 moves, generated %d", len(moves))
+	}
+
+	// testing pins - white
+	b = board.NewBoard("4k3/2q5/8/8/3N4/4K3/8/8 b - - 0 1")
+	setupMove := Move{From: board.C7, To: board.B6}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.D4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin white knight on down right diagonal")
+	}
+
+	b = board.NewBoard("4k3/6q1/8/8/5N2/4K3/8/8 b - - 0 1")
+	setupMove = Move{From: board.G7, To: board.H6}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.F4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin white knight on down left diagonal")
+	}
+
+	b = board.NewBoard("4k3/6q1/8/4N3/4K3/8/8/8 b - - 0 1")
+	setupMove = Move{From: board.G7, To: board.E7}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.E5))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin white knight on file")
+	}
+
+	b = board.NewBoard("4k3/6q1/8/8/4KN2/8/8/8 b - - 0 1")
+	setupMove = Move{From: board.G7, To: board.G4}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.F4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin white knight on rank")
+	}
+
+	// testing pins - black
+	b = board.NewBoard("4K3/2Q5/8/8/3n4/4k3/8/8 w - - 0 1")
+	setupMove = Move{From: board.C7, To: board.B6}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.D4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin black knight on down right diagonal")
+	}
+
+	b = board.NewBoard("4K3/6Q1/8/8/5n2/4k3/8/8 w - - 0 1")
+	setupMove = Move{From: board.G7, To: board.H6}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.F4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin black knight on down left diagonal")
+	}
+
+	b = board.NewBoard("4K3/6Q1/8/4n3/4k3/8/8/8 w - - 0 1")
+	setupMove = Move{From: board.G7, To: board.E7}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.E5))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin black knight on file")
+	}
+
+	b = board.NewBoard("4K3/6Q1/8/8/4kn2/8/8/8 w - - 0 1")
+	setupMove = Move{From: board.G7, To: board.G4}
+	MakeMove(&b, setupMove)
+
+	moves = generateKnightMoves(&b, int8(board.F4))
+
+	if len(moves) != 0 {
+		t.Errorf("failed to pin black knight on rank")
+	}
+
+	// testing checkmate - white
+	b = board.NewBoard("3rkr2/3ppp2/8/5N2/8/8/8/4K3 w - - 0 1")
+	setupMove = Move{From: board.F5, To: board.G7}
+	MakeMove(&b, setupMove)
+
+	moves = GenerateMovesList(&b)
+
+	if len(moves) != 0 {
+		t.Errorf("unable to deliver checkmate with white knight")
+	}
+
+	// testing checkmate - black
+	b = board.NewBoard("3RKR2/3PPP2/8/5n2/8/8/8/4k3 b - - 0 1")
+	setupMove = Move{From: board.F5, To: board.G7}
+	MakeMove(&b, setupMove)
+
+	moves = GenerateMovesList(&b)
+
+	if len(moves) != 0 {
+		t.Errorf("unable to deliver checkmate with black knight")
+	}
 }

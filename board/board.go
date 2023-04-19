@@ -176,4 +176,19 @@ func (b *Board) PrintBoard(){
 		}
 		fmt.Printf("\n")
 	}
+	if b.Status == StatusCheckmate{
+		var winner string
+		if b.Turn == White{
+			winner = "Black"
+		}else{
+			winner = "White"
+		}
+
+		fmt.Printf("Checkmate! %s wins!\n",winner)
+	}
+
+	if b.Status == StatusStalemate{
+		fmt.Printf("Stalemate!\n")
+	}
+
 }

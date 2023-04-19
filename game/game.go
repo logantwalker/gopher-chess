@@ -34,8 +34,6 @@ func (g *Game) Run(){
 			break
 		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
 			moves.MakeMove(&g.board,m)
-			g.board.PrintBoard()
-			fmt.Println(g.board.WhiteAttacks[int8(board.F1)],g.board.WhiteAttacks[int8(board.F2)])
 		}
 		
 		switch input {

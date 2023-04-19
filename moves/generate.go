@@ -1,8 +1,6 @@
 package moves
 
 import (
-	"fmt"
-
 	"github.com/logantwalker/gopher-chess/board"
 )
 
@@ -67,14 +65,12 @@ func GenerateMovesList(b *board.Board) []Move {
 
 	if len(moves) == 0 && !b.IsCheck{
 		b.Status = board.StatusStalemate
-		fmt.Println("Draw by Stalemate")
 	}
 
 	if b.IsCheck {
 		moves = generateMovesWhileInCheck(b, moves)
 		if len(moves) == 0{
 			b.Status = board.StatusCheckmate
-			fmt.Println("Checkmate!")
 		}
 	}
 

@@ -450,7 +450,5 @@ func findBlockingSquares(origin int8, dest int8, delta int8) []int8 {
 		blockingSquares = append(blockingSquares, sq)
 	}
 
-	fmt.Println("blocks: ",blockingSquares)
-
 	return blockingSquares
 }

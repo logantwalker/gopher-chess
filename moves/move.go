@@ -231,13 +231,14 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 	}
 
 	if b.Turn == board.White{
-		b.WhiteAttacks = map[int8]int8{}
+		b.WhiteAttacks = map[int8][]int8{}
 	}else{
-		b.BlackAttacks = map[int8]int8{}
+		b.BlackAttacks = map[int8][]int8{}
 	}
 
-	if b.Check != nil && b.Status != board.StatusCheckmate{
-		b.Check = nil
+	if b.IsCheck == true && b.Status != board.StatusCheckmate{
+		b.IsCheck = false
+		b.Checks = []*board.Check{}
 	}
 
 	generateAttacksList(b)

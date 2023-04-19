@@ -65,13 +65,20 @@ func GenerateMovesList(b *board.Board) []Move {
 		moves = append(moves, availableMoves...)
 	}
 
-	if b.Check != nil {
+	if len(moves) == 0 && b.IsCheck == false{
+		b.Status = board.StatusStalemate
+		fmt.Println("Draw by Stalemate")
+	}
+
+	if b.IsCheck == true {
 		moves = generateMovesWhileInCheck(b, moves)
 		if len(moves) == 0{
 			b.Status = board.StatusCheckmate
 			fmt.Println("Checkmate!")
 		}
 	}
+
+
 	return moves
 }
 

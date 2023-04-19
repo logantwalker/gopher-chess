@@ -95,34 +95,62 @@ func pawnPsuedoAttacks(b *board.Board, origin int8) {
 	if b.State[origin] > 0 {
 		if board.LegalSquare(origin + nextFile + nextRank) {
 			if _,exists := b.WhiteAttacks[origin + nextFile + nextRank]; !exists {
-				b.WhiteAttacks[origin + nextFile + nextRank] = origin
+				b.WhiteAttacks[origin + nextFile + nextRank] = []int8{origin}
 				if b.State[origin + nextFile + nextRank] == board.BlackKing {
-					b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile + nextRank}
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile + nextRank})
+				}
+			}else{
+				b.WhiteAttacks[origin + nextFile + nextRank] = append(b.WhiteAttacks[origin+nextFile+nextRank], origin)
+				if b.State[origin + nextFile + nextRank] == board.BlackKing {
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile + nextRank})
 				}
 			}
 		}
 		if board.LegalSquare(origin - nextFile + nextRank) {
 			if _,exists := b.WhiteAttacks[origin - nextFile + nextRank]; !exists {
-				b.WhiteAttacks[origin - nextFile + nextRank] = origin
+				b.WhiteAttacks[origin - nextFile + nextRank] = []int8{origin}
 				if b.State[origin - nextFile + nextRank] == board.BlackKing{
-					b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: nextRank - nextFile}
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextRank - nextFile})
+				}
+			}else{
+				b.WhiteAttacks[origin - nextFile + nextRank] = append(b.WhiteAttacks[origin-nextFile+nextRank], origin)
+				if b.State[origin - nextFile + nextRank] == board.BlackKing{
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextRank - nextFile})
 				}
 			}
 		}
 	}else{
 		if board.LegalSquare(origin + nextFile - nextRank) {
 			if _,exists := b.BlackAttacks[origin + nextFile - nextRank]; !exists {
-				b.BlackAttacks[origin + nextFile - nextRank] = origin
+				b.BlackAttacks[origin + nextFile - nextRank] = []int8{origin}
 				if b.State[origin + nextFile - nextRank] == board.WhiteKing{
-					b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile - nextRank}
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile - nextRank})
+				}
+			}else{
+				b.BlackAttacks[origin + nextFile - nextRank] = append(b.BlackAttacks[origin+nextFile-nextRank], origin)
+				if b.State[origin + nextFile - nextRank] == board.WhiteKing{
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: nextFile - nextRank})
 				}
 			}
 		}
 		if board.LegalSquare(origin - nextFile - nextRank) {
 			if _,exists := b.BlackAttacks[origin - nextFile - nextRank]; !exists {
-				b.BlackAttacks[origin - nextFile - nextRank] = origin
+				b.BlackAttacks[origin - nextFile - nextRank] = []int8{origin}
 				if b.State[origin - nextFile - nextRank] == board.WhiteKing{
-					b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: 0 - nextFile - nextRank}
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: 0 - nextFile - nextRank})
+				}
+			}else{
+				b.BlackAttacks[origin - nextFile - nextRank] = append(b.BlackAttacks[origin-nextFile-nextRank], origin)
+				if b.State[origin - nextFile - nextRank] == board.WhiteKing{
+					b.IsCheck = true
+					b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: 0 - nextFile - nextRank})
 				}
 			}
 		}
@@ -135,16 +163,30 @@ func knightPsuedoAttacks(b *board.Board, origin int8) {
 		if board.LegalSquare(dest){
 			if b.State[origin] > 0 {
 				if _,exists := b.WhiteAttacks[dest]; !exists{
-					b.WhiteAttacks[dest] = origin
+					b.WhiteAttacks[dest] = []int8{origin}
 					if b.State[dest] == board.BlackKing{
-						b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: move}
+						b.IsCheck = true
+						b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: move})
+					}
+				}else{
+					b.WhiteAttacks[dest] = append(b.WhiteAttacks[dest], origin)
+					if b.State[dest] == board.BlackKing{
+						b.IsCheck = true
+						b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: move})
 					}
 				}
 			}else{
 				if _,exists := b.BlackAttacks[dest]; !exists{
-					b.BlackAttacks[dest] = origin
+					b.BlackAttacks[dest] = []int8{origin}
 					if b.State[dest] == board.WhiteKing{
-						b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: move}
+						b.IsCheck = true
+						b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: move})
+					}
+				}else{
+					b.BlackAttacks[dest] = append(b.BlackAttacks[dest], origin)
+					if b.State[dest] == board.WhiteKing{
+						b.IsCheck = true
+						b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: move})
 					}
 				}
 			}
@@ -200,11 +242,15 @@ func kingPsuedoAttacks(b *board.Board, origin int8){
 		if board.LegalSquare(dest){
 			if b.Turn == board.White{
 				if _,exists := b.WhiteAttacks[dest]; !exists{
-					b.WhiteAttacks[dest] = origin
+					b.WhiteAttacks[dest] = []int8{origin}
+				}else{
+					b.WhiteAttacks[dest] = append(b.WhiteAttacks[dest], origin)
 				}
 			}else{
 				if _,exists := b.BlackAttacks[dest]; !exists{
-					b.BlackAttacks[dest] = origin
+					b.BlackAttacks[dest] = []int8{origin}
+				}else{
+					b.BlackAttacks[dest] = append(b.BlackAttacks[dest], origin)
 				}
 			}
 		}
@@ -219,26 +265,44 @@ func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
 			if b.State[i] == board.Empty{
 				if b.State[origin] > 0{
 					if _,exists := b.WhiteAttacks[i]; !exists{
-						b.WhiteAttacks[i] = origin
+						b.WhiteAttacks[i] = []int8{origin}
+					}else{
+						b.WhiteAttacks[i] = append(b.WhiteAttacks[i], origin)
 					}
 				}else{
 					if _,exists := b.BlackAttacks[i]; !exists{
-						b.BlackAttacks[i] = origin
+						b.BlackAttacks[i] = []int8{origin}
+					}else{
+						b.BlackAttacks[i] = append(b.BlackAttacks[i], origin)
 					}
 				}
 			}else{
 				if b.State[origin] > 0 {
 					if _,exists := b.WhiteAttacks[i]; !exists{
-						b.WhiteAttacks[i] = origin
+						b.WhiteAttacks[i] = []int8{origin}
 						if b.State[i] == board.BlackKing{
-							b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: delta}
+							b.IsCheck = true
+							b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: delta})
+						}
+					}else{
+						b.WhiteAttacks[i] = append(b.WhiteAttacks[i], origin)
+						if b.State[i] == board.BlackKing{
+							b.IsCheck = true
+							b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: delta})
 						}
 					}
 				}else{
 					if _,exists := b.BlackAttacks[i]; !exists{
-						b.BlackAttacks[i] = origin
+						b.BlackAttacks[i] = []int8{origin}
 						if b.State[i] == board.WhiteKing{
-							b.Check = &board.Check{AttackerOrigin: origin, AttackerDelta: delta}
+							b.IsCheck = true
+							b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: delta})
+						}
+					}else{
+						b.BlackAttacks[i] = append(b.BlackAttacks[i], origin)
+						if b.State[i] == board.WhiteKing{
+							b.IsCheck = true
+							b.Checks = append(b.Checks, &board.Check{AttackerOrigin: origin, AttackerDelta: delta})
 						}
 					}
 				}
@@ -326,6 +390,55 @@ func checkCastlingAvailability(b *board.Board) []bool {
 	}
 
 	return []bool{castleRights[0] && castleAbility[0],castleRights[1] && castleAbility[1],}
+}
+
+func findLegalMovesForCheck(b *board.Board, Check *board.Check, moves []Move) []Move{
+	attacker := b.State[Check.AttackerOrigin]
+	attackDelta := Check.AttackerDelta
+
+	var legalMoves []Move
+	if b.Turn == board.White {
+		if attacker == board.BlackRook || attacker == board.BlackQueen || attacker == board.BlackBishop {
+			blockSquares := findBlockingSquares(Check.AttackerOrigin, b.KingLocations[0], attackDelta)
+
+			for _, sq := range blockSquares {
+				for _, move := range moves{
+					if int8(move.To) == sq{
+						legalMoves = append(legalMoves, move)
+					}
+				}
+			}
+		}
+	}else{
+		if attacker == board.WhiteRook || attacker == board.WhiteQueen || attacker == board.WhiteBishop {
+			blockSquares := findBlockingSquares(Check.AttackerOrigin, b.KingLocations[1], attackDelta)
+			for _, sq := range blockSquares {
+				for _, move := range moves{
+					if int8(move.To) == sq{
+						legalMoves = append(legalMoves, move)
+					}
+				}
+			}
+		}
+	}
+
+	//find captures
+	for _, move := range moves{
+		if int8(move.To) == Check.AttackerOrigin && move.Capture == attacker{
+			legalMoves = append(legalMoves, move)
+		}
+	}
+
+	//find legal king moves
+	var kingMoves []Move
+	if b.Turn == board.White{
+		kingMoves = generateKingMoves(b, b.KingLocations[0])
+	}else{
+		kingMoves = generateKingMoves(b, b.KingLocations[1])
+	}
+
+	legalMoves = append(legalMoves, kingMoves...)
+	return legalMoves
 }
 
 func findBlockingSquares(origin int8, dest int8, delta int8) []int8 {

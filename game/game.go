@@ -14,7 +14,7 @@ type Game struct{
 }
 
 func NewGame() Game {
-	b := board.NewBoard("4k3/8/4q3/8/8/4n2B/3N4/3RK3 b - - 0 1")
+	b := board.NewBoard(board.StartingFen)
 
 	g := new(Game)
 
@@ -35,8 +35,7 @@ func (g *Game) Run(){
 		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
 			moves.MakeMove(&g.board,m)
 			g.board.PrintBoard()
-
-			fmt.Println(g.board.Checks)
+			fmt.Println(g.board.WhiteAttacks[int8(board.F1)],g.board.WhiteAttacks[int8(board.F2)])
 		}
 		
 		switch input {

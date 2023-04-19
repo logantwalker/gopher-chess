@@ -93,7 +93,6 @@ func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
 		moveDict := make(map[string]int) 
 		for _, check := range b.Checks{
 			candidateMoves = findLegalMovesForCheck(b, check, moves)
-			fmt.Println(candidateMoves)
 			for _, move := range candidateMoves{
 				moveString := board.SquareHexToString[move.To] + board.SquareHexToString[move.From]
 				if count, exists := moveDict[moveString]; !exists{
@@ -329,10 +328,6 @@ func generateKingMoves(b *board.Board, origin int8) []Move {
 		dest := origin + delta
 		if b.Turn == board.White{
 			if attacks := b.BlackAttacks[dest]; len(attacks) > 0{
-				fmt.Println("square " + board.SquareHexToString[board.Square(dest)] + " is attacked")
-				for _, attack := range attacks{
-					fmt.Println(board.GetPieceSymbol(b.State[attack]))
-				}
 				continue
 			}
 			if delta == 2*moveRight || delta == 2*moveLeft {
@@ -357,7 +352,7 @@ func generateKingMoves(b *board.Board, origin int8) []Move {
 				}
 			}
 		}else{
-			if _,isSqAttacked := b.WhiteAttacks[dest]; isSqAttacked{
+			if attacks:= b.WhiteAttacks[dest]; len(attacks) > 0 {
 				continue
 			}
 			if delta == 2*moveRight || delta == 2*moveLeft {

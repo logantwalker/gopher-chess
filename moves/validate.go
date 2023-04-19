@@ -7,7 +7,7 @@ import (
 	"github.com/logantwalker/gopher-chess/board"
 )
 
-func ValidateUserMove(b *board.Board, move Move) (Move, error){
+func ValidateUserMove(b *board.Board, move board.Move) (board.Move, error){
 	validMoves := GenerateMovesList(b)
 
 	for _, validMove := range validMoves{
@@ -22,10 +22,10 @@ func ValidateUserMove(b *board.Board, move Move) (Move, error){
 		}	
 	}
 
-	return Move{}, errors.New("invalid move")
+	return board.Move{}, errors.New("invalid move")
 }
 
-func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []Move) []Move {
+func validateLongRangeMoves(origin int8, delta int8, b *board.Board, moves []board.Move) []board.Move {
 	var isPiecePinned bool
 	var pin board.Pin
 	if b.Turn == board.White{
@@ -392,11 +392,11 @@ func checkCastlingAvailability(b *board.Board) []bool {
 	return []bool{castleRights[0] && castleAbility[0],castleRights[1] && castleAbility[1],}
 }
 
-func findLegalMovesForCheck(b *board.Board, Check *board.Check, moves []Move) []Move{
+func findLegalMovesForCheck(b *board.Board, Check *board.Check, moves []board.Move) []board.Move{
 	attacker := b.State[Check.AttackerOrigin]
 	attackDelta := Check.AttackerDelta
 
-	var legalMoves []Move
+	var legalMoves []board.Move
 	if b.Turn == board.White {
 		if attacker == board.BlackRook || attacker == board.BlackQueen || attacker == board.BlackBishop {
 			blockSquares := findBlockingSquares(Check.AttackerOrigin, b.KingLocations[0], attackDelta)
@@ -430,7 +430,7 @@ func findLegalMovesForCheck(b *board.Board, Check *board.Check, moves []Move) []
 	}
 
 	//find legal king moves
-	var kingMoves []Move
+	var kingMoves []board.Move
 	if b.Turn == board.White{
 		kingMoves = generateKingMoves(b, b.KingLocations[0])
 	}else{

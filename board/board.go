@@ -33,6 +33,15 @@ type Check struct {
 	AttackerDelta 	int8
 }
 
+type Move struct{
+	From 		Square
+	To 			Square
+	Capture 	int8
+	MovedPiece 	int8
+	Type 		int8
+	Promotion 	int8
+	// Pin 		*board.Pin
+}
 
 type Board struct {
 	// history 		[]MoveRecord
@@ -52,6 +61,7 @@ type Board struct {
 	FullMoveClock	int
 	Ply 			int
 	Status 			int
+	ZobristTable	*ZobristTable
 }
 
 func NewBoard(fen string) Board {
@@ -63,10 +73,13 @@ func NewBoard(fen string) Board {
 	b.WhitePins = map[int8]Pin{}
 	b.BlackAttacks = map[int8][]int8{}
 	b.BlackPins = map[int8]Pin{}
+	b.ZobristTable = InitZobristTable()
 
 	if err != nil{
 		log.Fatal(err.Error())
 	}
+
+	fmt.Println(b.ZobristTable)
 
 	return b
 }

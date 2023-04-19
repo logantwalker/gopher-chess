@@ -51,17 +51,7 @@ var (
 	moveEnPassant	int8 = 4
 )
 
-type Move struct{
-	From 		board.Square
-	To 			board.Square
-	Capture 	int8
-	MovedPiece 	int8
-	Type 		int8
-	Promotion 	int8
-	// Pin 		*board.Pin
-}
-
-func CreateMoveFromInput(b *board.Board, input string) (Move, error) {
+func CreateMoveFromInput(b *board.Board, input string) (board.Move, error) {
 	input = strings.Trim(input, " ")
 	var promotion string
 	if len(input) == 5 {
@@ -69,13 +59,13 @@ func CreateMoveFromInput(b *board.Board, input string) (Move, error) {
 		input = strings.TrimSuffix(input, promotion)
 	}
 	if m, _ := regexp.MatchString("^[a-h][1-8][a-h][1-8]$", input); !m {
-		return Move{}, errors.New("invalid move")
+		return board.Move{}, errors.New("invalid move")
 	}
 
 	from := board.SquareStringToHex[input[:2]]
 	to := board.SquareStringToHex[input[2:]]
 
-	var move Move = Move{From: from, To: to}
+	var move board.Move = board.Move{From: from, To: to}
 	if len(promotion) > 0 {
 		move.Type = movePromote
 		switch promotion {
@@ -93,17 +83,17 @@ func CreateMoveFromInput(b *board.Board, input string) (Move, error) {
 }
 
 
-func createMove(origin int8, dest int8) Move {
-	var move Move
+func createMove(origin int8, dest int8) board.Move {
+	var move board.Move
 
 	if board.LegalSquare(dest){
-		move = Move{From: board.Square(origin), To: board.Square(dest)}
+		move = board.Move{From: board.Square(origin), To: board.Square(dest)}
 	}
 	
 	return move
 }
 
-func PrintMoves(moves []Move) {
+func PrintMoves(moves []board.Move) {
 	for _, move := range moves {
 		pieceSymbol := board.GetPieceSymbol(move.MovedPiece)
 		moveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
@@ -117,7 +107,7 @@ func PrintMoves(moves []Move) {
 	}
 } 
 
-func MakeMove(b *board.Board, move Move) *board.Board{
+func MakeMove(b *board.Board, move board.Move) *board.Board{
 	b.HalfMoveClock++
 
 	if b.Turn == board.Black{

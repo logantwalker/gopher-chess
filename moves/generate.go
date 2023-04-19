@@ -4,12 +4,12 @@ import (
 	"github.com/logantwalker/gopher-chess/board"
 )
 
-func GenerateMovesList(b *board.Board) []Move {
-	var moves []Move
+func GenerateMovesList(b *board.Board) []board.Move {
+	var moves []board.Move
 
 	for _, hex := range board.HexBoard {
 		square := b.State[hex]
-		var availableMoves []Move
+		var availableMoves []board.Move
 		switch square {
 		case board.WhitePawn:
 			if b.Turn == board.White{
@@ -78,14 +78,14 @@ func GenerateMovesList(b *board.Board) []Move {
 	return moves
 }
 
-func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
-	var legalMoves []Move
+func generateMovesWhileInCheck(b *board.Board, moves []board.Move) []board.Move {
+	var legalMoves []board.Move
 	if len(b.Checks) == 1{
 		legalMoves = findLegalMovesForCheck(b,b.Checks[0],moves)
 	}
 
 	if len(b.Checks) > 1 {
-		var candidateMoves []Move
+		var candidateMoves []board.Move
 		moveDict := make(map[string]int) 
 		for _, check := range b.Checks{
 			candidateMoves = findLegalMovesForCheck(b, check, moves)
@@ -107,8 +107,8 @@ func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
 	return legalMoves
 }
 
-func generatePawnMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generatePawnMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 	if b.Turn == board.White{
 		pin, isPinned := b.WhitePins[origin]
 		if b.EnPassant != 0{
@@ -266,8 +266,8 @@ func generatePawnMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func generatePawnPromotions(b *board.Board, base Move) []Move {
-	var moves []Move
+func generatePawnPromotions(b *board.Board, base board.Move) []board.Move {
+	var moves []board.Move
 	if b.Turn == board.White{
 		promotions := []int8{board.WhiteQueen, board.WhiteRook, board.WhiteBishop, board.WhiteKnight}
 		for _, option := range promotions{
@@ -288,8 +288,8 @@ func generatePawnPromotions(b *board.Board, base Move) []Move {
 
 }
 
-func generateKnightMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generateKnightMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 
 	var isPiecePinned bool
 	if b.Turn == board.White{
@@ -318,8 +318,8 @@ func generateKnightMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateKingMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generateKingMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 	for _, delta := range kingMoves{
 		dest := origin + delta
 		if b.Turn == board.White{
@@ -378,8 +378,8 @@ func generateKingMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateQueenMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generateQueenMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 	// check left moves
 	moves = validateLongRangeMoves(origin,-nextFile, b, moves)
 	// check right moves
@@ -400,8 +400,8 @@ func generateQueenMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateRookMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generateRookMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 	// move up
 	moves = validateLongRangeMoves(origin, nextRank,b,moves)
 	// move down
@@ -414,8 +414,8 @@ func generateRookMoves(b *board.Board, origin int8) []Move {
 	return moves
 }
 
-func generateBishopMoves(b *board.Board, origin int8) []Move {
-	var moves []Move
+func generateBishopMoves(b *board.Board, origin int8) []board.Move {
+	var moves []board.Move
 	// move up left
 	moves = validateLongRangeMoves(origin,nextRank - nextFile,b,moves)
 	// move up right

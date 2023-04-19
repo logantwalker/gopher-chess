@@ -238,9 +238,9 @@ func queenPsuedoAttacks(b *board.Board, origin int8){
 func kingPsuedoAttacks(b *board.Board, origin int8){
 	for _, move := range kingMoves{
 		dest := origin + move
-
+		piece := b.State[origin]
 		if board.LegalSquare(dest){
-			if b.Turn == board.White{
+			if piece == board.WhiteKing{
 				if _,exists := b.WhiteAttacks[dest]; !exists{
 					b.WhiteAttacks[dest] = []int8{origin}
 				}else{

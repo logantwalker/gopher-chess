@@ -230,13 +230,15 @@ func MakeMove(b *board.Board, move Move) *board.Board{
 		b.HalfMoveClock = 0
 	}
 
+	resetMap := make(map[int8][]int8)
 	if b.Turn == board.White{
-		b.WhiteAttacks = map[int8][]int8{}
+		b.WhiteAttacks = resetMap
 	}else{
-		b.BlackAttacks = map[int8][]int8{}
+		
+		b.BlackAttacks = resetMap
 	}
 
-	if b.IsCheck == true && b.Status != board.StatusCheckmate{
+	if b.IsCheck && b.Status != board.StatusCheckmate{
 		b.IsCheck = false
 		b.Checks = []*board.Check{}
 	}

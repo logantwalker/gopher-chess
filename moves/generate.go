@@ -83,53 +83,33 @@ func GenerateMovesList(b *board.Board) []Move {
 }
 
 func generateMovesWhileInCheck(b *board.Board, moves []Move) []Move {
-	attacker := b.State[b.Check.AttackerOrigin]
-	attackDelta := b.Check.AttackerDelta
-
 	var legalMoves []Move
-	if b.Turn == board.White {
-		if attacker == board.BlackRook || attacker == board.BlackQueen || attacker == board.BlackBishop {
-			blockSquares := findBlockingSquares(b.Check.AttackerOrigin, b.KingLocations[0], attackDelta)
+	if len(b.Checks) == 1{
+		legalMoves = findLegalMovesForCheck(b,b.Checks[0],moves)
+	}
 
-			for _, sq := range blockSquares {
-				for _, move := range moves{
-					if int8(move.To) == sq{
+	if len(b.Checks) > 1 {
+		var candidateMoves []Move
+		moveDict := make(map[string]int) 
+		for _, check := range b.Checks{
+			candidateMoves = findLegalMovesForCheck(b, check, moves)
+			fmt.Println(candidateMoves)
+			for _, move := range candidateMoves{
+				moveString := board.SquareHexToString[move.To] + board.SquareHexToString[move.From]
+				if count, exists := moveDict[moveString]; !exists{
+					moveDict[moveString] = 1
+				}else{
+					moveDict[moveString] = count + 1
+
+					if count = moveDict[moveString]; count == len(b.Checks){
 						legalMoves = append(legalMoves, move)
 					}
 				}
 			}
 		}
-	}else{
-		if attacker == board.WhiteRook || attacker == board.WhiteQueen || attacker == board.WhiteBishop {
-			blockSquares := findBlockingSquares(b.Check.AttackerOrigin, b.KingLocations[1], attackDelta)
-			for _, sq := range blockSquares {
-				for _, move := range moves{
-					if int8(move.To) == sq{
-						legalMoves = append(legalMoves, move)
-					}
-				}
-			}
-		}
 	}
 
-	//find captures
-	for _, move := range moves{
-		if int8(move.To) == b.Check.AttackerOrigin && move.Capture == attacker{
-			legalMoves = append(legalMoves, move)
-		}
-	}
-
-	//find legal king moves
-	var kingMoves []Move
-	if b.Turn == board.White{
-		kingMoves = generateKingMoves(b, b.KingLocations[0])
-	}else{
-		kingMoves = generateKingMoves(b, b.KingLocations[1])
-	}
-
-	legalMoves = append(legalMoves, kingMoves...)
 	return legalMoves
-
 }
 
 func generatePawnMoves(b *board.Board, origin int8) []Move {
@@ -348,7 +328,11 @@ func generateKingMoves(b *board.Board, origin int8) []Move {
 	for _, delta := range kingMoves{
 		dest := origin + delta
 		if b.Turn == board.White{
-			if _,isSqAttacked := b.BlackAttacks[dest]; isSqAttacked{
+			if attacks := b.BlackAttacks[dest]; len(attacks) > 0{
+				fmt.Println("square " + board.SquareHexToString[board.Square(dest)] + " is attacked")
+				for _, attack := range attacks{
+					fmt.Println(board.GetPieceSymbol(b.State[attack]))
+				}
 				continue
 			}
 			if delta == 2*moveRight || delta == 2*moveLeft {

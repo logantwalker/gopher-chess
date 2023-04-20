@@ -41,6 +41,8 @@ func (g *Game) Run(){
 		case "moves":
 			m := moves.GenerateMovesList(&g.board)
 			moves.PrintMoves(m)
+		case "undo":
+			moves.UndoMove(&g.board)
 		case "print":
 			g.board.PrintBoard()
 		}

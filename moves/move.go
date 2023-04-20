@@ -261,3 +261,108 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 
 	return b
 }
+
+func UndoMove(b *board.Board) {
+	if len(b.History) < 1 {
+		fmt.Println("could not undo move")
+		return
+	}
+
+	moveRecord := b.History[len(b.History) - 1]
+	b.History = b.History[0 : len(b.History) - 1]
+
+	b.WhiteCastle = moveRecord.WhiteCastle
+	b.BlackCastle = moveRecord.BlackCastle
+	b.EnPassant = moveRecord.EnPassant
+	b.HalfMoveClock = moveRecord.HalfMoveClock
+	b.ZobristHash =  moveRecord.ZobristHash
+
+	move := moveRecord.Move
+
+	switch move.Type {
+	case moveOrdinary:
+		b.State[move.From] = move.MovedPiece
+		
+		if move.Capture != board.Empty{
+			b.State[move.To] = move.Capture
+		}else{
+			b.State[move.To] = board.Empty
+		}
+		switch move.MovedPiece {
+		case board.WhiteKing:
+			b.KingLocations[0] = int8(move.From)
+		case board.BlackKing:
+			b.KingLocations[1] = int8(move.From)
+		}
+	case moveEnPassant:
+		switch move.MovedPiece {
+		case board.WhitePawn:
+			b.State[move.From] = move.MovedPiece
+			b.State[move.To] = board.Empty
+			b.State[int8(b.EnPassant) - nextRank] = move.Capture
+		case board.BlackPawn:
+			b.State[move.From] = move.MovedPiece
+			b.State[move.To] = board.Empty
+			b.State[int8(b.EnPassant) + nextRank] = move.Capture
+		}
+	case moveShortCastle:
+		b.State[move.From] = move.MovedPiece
+		b.State[move.To] = board.Empty
+
+		switch move.MovedPiece {
+		case board.WhiteKing:
+			b.State[board.WhiteRookStartSquares[1]] = board.WhiteRook
+			b.State[int8(move.To) - nextFile] = board.Empty
+			b.KingLocations[0] = int8(move.From)
+		case board.BlackKing:
+			b.State[board.BlackRookStartSquares[1]] = board.BlackRook
+			b.State[int8(move.To) - nextFile] = board.Empty
+			b.KingLocations[1] = int8(move.From)
+		}
+	case moveLongCastle:
+		b.State[move.From] = move.MovedPiece
+		b.State[move.To] = board.Empty
+		switch move.MovedPiece {
+		case board.WhiteKing:
+			b.State[board.WhiteRookStartSquares[0]] = board.WhiteRook
+			b.State[int8(move.To) + nextFile] = board.Empty 
+			b.KingLocations[0] = int8(move.From)
+		case board.BlackKing:	
+			b.State[board.BlackRookStartSquares[0]] = board.BlackRook
+			b.State[int8(move.To) + nextFile] = board.Empty 
+			b.KingLocations[1] = int8(move.From)
+		}
+	case movePromote:
+		b.State[move.From] = move.MovedPiece 
+		b.State[move.To] = board.Empty
+	}
+	
+
+
+	resetMap := make(map[int8][]int8)
+	if b.Turn == board.White{
+		b.WhiteAttacks = resetMap
+	}else{
+		b.BlackAttacks = resetMap
+	}
+
+	if b.IsCheck && b.Status != board.StatusCheckmate{
+		b.IsCheck = false
+		b.Checks = []*board.Check{}
+	}
+
+	generateAttacksList(b)
+
+	b.Ply--
+	b.Turn = -1 * b.Turn
+
+	if b.Turn == board.Black {
+		b.FullMoveClock--
+	}
+
+	if b.IsCheck {
+		GenerateMovesList(b)
+	}
+
+	b.PrintBoard()
+}

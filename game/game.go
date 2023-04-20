@@ -34,6 +34,7 @@ func (g *Game) Run(){
 			break
 		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
 			moves.MakeMove(&g.board,m)
+			fmt.Println(g.board.ZobristHash)
 		}
 		
 		switch input {

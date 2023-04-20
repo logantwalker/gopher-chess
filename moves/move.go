@@ -233,6 +233,8 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 		b.Checks = []*board.Check{}
 	}
 
+	b.UpdateHash(&validMove)
+
 	generateAttacksList(b)
 
 	b.Ply ++

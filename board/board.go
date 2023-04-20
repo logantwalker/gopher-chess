@@ -43,6 +43,15 @@ type Move struct{
 	// Pin 		*board.Pin
 }
 
+// move types
+var (
+	moveOrdinary 	int8 = 0
+	moveShortCastle int8 = 1
+	moveLongCastle 	int8 = 2
+	movePromote		int8 = 3
+	moveEnPassant	int8 = 4
+)
+
 type Board struct {
 	// history 		[]MoveRecord
 	State 			[]int8
@@ -62,6 +71,7 @@ type Board struct {
 	Ply 			int
 	Status 			int
 	ZobristTable	*ZobristTable
+	ZobristHash		uint64
 }
 
 func NewBoard(fen string) Board {
@@ -74,12 +84,11 @@ func NewBoard(fen string) Board {
 	b.BlackAttacks = map[int8][]int8{}
 	b.BlackPins = map[int8]Pin{}
 	b.ZobristTable = InitZobristTable()
+	b.GenerateHash()
 
 	if err != nil{
 		log.Fatal(err.Error())
 	}
-
-	fmt.Println(b.ZobristTable)
 
 	return b
 }
@@ -204,4 +213,70 @@ func (b *Board) PrintBoard(){
 		fmt.Printf("Stalemate!\n")
 	}
 
+}
+
+func (b *Board) GenerateHash() {
+	key := uint64(0)
+
+	for sq := int8(0); sq < NumSquares; sq++ {
+		piece := b.State[sq]
+		if piece > Empty {
+			key ^= b.ZobristTable.pieceKeys[piece-1][0][sq]
+		} else if piece < Empty {
+			key ^= b.ZobristTable.pieceKeys[-piece-1][1][sq]
+		}
+	}
+
+	key ^= b.ZobristTable.whiteCastlingKeys[b.WhiteCastle]
+	key ^= b.ZobristTable.blackCastlingKeys[b.BlackCastle]
+
+	if b.Turn == Black {
+		key ^= b.ZobristTable.sideToMoveKey
+	}
+
+	b.ZobristHash = key
+}
+
+func (b* Board) UpdateHash(m *Move){
+	key := b.ZobristHash
+	side := 0
+	if b.Turn == Black {
+		side = 1
+	}
+	piece := m.MovedPiece
+	if piece < 0{
+		piece = -1*piece
+	}
+
+	piece = piece - 1
+
+	key ^= b.ZobristTable.pieceKeys[piece][side][int8(m.From)]
+	key ^= b.ZobristTable.pieceKeys[piece][side][int8(m.To)]
+
+	if m.Capture != Empty {
+		capture := m.Capture
+		if capture < 0{
+			capture = -1*capture
+		}
+		key ^= b.ZobristTable.pieceKeys[capture-1][side][int8(m.To)]
+	}
+
+	switch m.Type {
+	case moveLongCastle:
+		if side == 0 {
+			key ^= b.ZobristTable.whiteCastlingKeys[CastleLong]
+		} else {
+			key ^= b.ZobristTable.blackCastlingKeys[CastleLong]
+		}
+	case moveShortCastle:
+		if side == 0 {
+			key ^= b.ZobristTable.whiteCastlingKeys[CastleShort]
+		} else {
+			key ^= b.ZobristTable.blackCastlingKeys[CastleShort]
+		}
+	case moveEnPassant:
+		key ^= b.ZobristTable.enPassantKeys[int8(m.To)-int8(m.MovedPiece)*16]
+	}
+
+	b.ZobristHash = key
 }

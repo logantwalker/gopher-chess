@@ -452,3 +452,19 @@ func findBlockingSquares(origin int8, dest int8, delta int8) []int8 {
 
 	return blockingSquares
 }
+
+func checkRepititions(b *board.Board) {
+	r := 0
+	first := len(b.History) - b.HalfMoveClock
+	if first >= 0 {
+		for i := first; i < len(b.History)-1; i++ {
+			if b.History[i].ZobristHash == b.ZobristHash {
+				r++
+			}
+		}
+	}
+
+	if r >= 3 {
+		b.Status = board.StatusThreeFoldRep
+	}
+}

@@ -22,6 +22,7 @@ var (
 	StatusNormal int = 0
 	StatusCheckmate int = 1
 	StatusStalemate int = 2
+	StatusThreeFoldRep int = 3
 )
 
 type Pin struct {
@@ -52,8 +53,17 @@ var (
 	moveEnPassant	int8 = 4
 )
 
+type MoveRecord struct{
+	Move 			Move
+	WhiteCastle		int8
+	BlackCastle		int8
+	EnPassant		Square
+	HalfMoveClock	int
+	ZobristHash		uint64
+}
+
 type Board struct {
-	// history 		[]MoveRecord
+	History 		[]MoveRecord
 	State 			[]int8
 	Turn 			int8
 	WhiteCastle 	int8

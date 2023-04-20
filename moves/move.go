@@ -120,6 +120,17 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 		return b
 	}
 
+	moveRecord := board.MoveRecord{
+		Move: validMove,
+		WhiteCastle: b.WhiteCastle,
+		BlackCastle: b.BlackCastle,
+		EnPassant: b.EnPassant,
+		HalfMoveClock: b.HalfMoveClock,
+		ZobristHash: b.ZobristHash,
+	}
+
+	b.History = append(b.History, moveRecord)
+
 	switch validMove.Type {
 	case moveOrdinary:
 		b.State[validMove.From] = board.Empty
@@ -234,6 +245,8 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 	}
 
 	b.UpdateHash(&validMove)
+
+	checkRepititions(b)
 
 	generateAttacksList(b)
 

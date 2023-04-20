@@ -65,3 +65,33 @@ func TestCheck(t *testing.T) {
 		t.Error("generating invalid moves")
 	}
 }
+
+func TestThreeFoldRepitition(t *testing.T) {
+	b := board.NewBoard(board.StartingFen)
+	MakeMove(&b, board.Move{From: board.E2,To: board.E4})
+	MakeMove(&b, board.Move{From: board.E7,To: board.E5})
+
+	// repeating king moves
+	MakeMove(&b, board.Move{From: board.E1,To: board.E2})
+	MakeMove(&b, board.Move{From: board.E8,To: board.E7})
+
+	MakeMove(&b, board.Move{From: board.E2,To: board.E1})
+	MakeMove(&b, board.Move{From: board.E7,To: board.E8})
+
+	MakeMove(&b, board.Move{From: board.E1,To: board.E2})
+	MakeMove(&b, board.Move{From: board.E8,To: board.E7})
+	
+	MakeMove(&b, board.Move{From: board.E2,To: board.E1})
+	MakeMove(&b, board.Move{From: board.E7,To: board.E8})
+
+	MakeMove(&b, board.Move{From: board.E1,To: board.E2})
+	MakeMove(&b, board.Move{From: board.E8,To: board.E7})
+	
+	MakeMove(&b, board.Move{From: board.E2,To: board.E1})
+	MakeMove(&b, board.Move{From: board.E7,To: board.E8})
+
+	if b.Status != board.StatusThreeFoldRep{
+		t.Errorf("didn't find repitition")
+	}
+
+}

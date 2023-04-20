@@ -223,6 +223,10 @@ func (b *Board) PrintBoard(){
 		fmt.Printf("Stalemate!\n")
 	}
 
+	if b.Status == StatusThreeFoldRep {
+		fmt.Printf("Draw by Three Fold Repitition.\n")
+	}
+
 }
 
 func (b *Board) GenerateHash() {

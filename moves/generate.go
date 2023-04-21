@@ -306,10 +306,12 @@ func generateKnightMoves(b *board.Board, origin int8) []board.Move {
 		dest := origin + delta
 		if board.LegalSquare(dest) && b.State[dest] <=0 && b.Turn == board.White{
 			move := createMove(origin, dest)
+			move.Capture = b.State[dest]
 			move.MovedPiece = board.WhiteKnight
 			moves = append(moves, move)
 		}else if board.LegalSquare(dest) && b.State[dest] >=0 && b.Turn == board.Black{
 			move := createMove(origin, dest)
+			move.Capture = b.State[dest]
 			move.MovedPiece = board.BlackKnight
 			moves = append(moves, move)
 		}		

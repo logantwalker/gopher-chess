@@ -3,6 +3,7 @@ package moves
 import (
 	"errors"
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -116,7 +117,13 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 
 	validMove, err := ValidateUserMove(b, move)
 	if err != nil {
-		fmt.Println(err.Error())
+		invalidMoveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
+		b.PrintBoard()
+		log.Println("legal moves: ")
+		m := GenerateMovesList(b)
+		PrintMoves(m)
+		fmt.Println("board state: ", b.BlackPins)
+		log.Fatalf("%s. move: %s, turn: %d\n", err.Error(), invalidMoveString, b.Turn)
 		return b
 	}
 
@@ -235,7 +242,6 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 	if b.Turn == board.White{
 		b.WhiteAttacks = resetMap
 	}else{
-		
 		b.BlackAttacks = resetMap
 	}
 
@@ -257,14 +263,13 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 		GenerateMovesList(b)
 	}
 
-	b.PrintBoard()
-
 	return b
 }
 
 func UndoMove(b *board.Board) {
 	if len(b.History) < 1 {
-		fmt.Println("could not undo move")
+		b.PrintBoard()
+		log.Fatal("could not undo move")
 		return
 	}
 
@@ -282,12 +287,8 @@ func UndoMove(b *board.Board) {
 	switch move.Type {
 	case moveOrdinary:
 		b.State[move.From] = move.MovedPiece
-		
-		if move.Capture != board.Empty{
-			b.State[move.To] = move.Capture
-		}else{
-			b.State[move.To] = board.Empty
-		}
+		b.State[move.To] = move.Capture
+
 		switch move.MovedPiece {
 		case board.WhiteKing:
 			b.KingLocations[0] = int8(move.From)
@@ -334,10 +335,11 @@ func UndoMove(b *board.Board) {
 		}
 	case movePromote:
 		b.State[move.From] = move.MovedPiece 
-		b.State[move.To] = board.Empty
+		b.State[move.To] = move.Capture
 	}
-	
 
+	b.WhitePins = map[int8]board.Pin{}
+	b.BlackPins = map[int8]board.Pin{}
 
 	resetMap := make(map[int8][]int8)
 	if b.Turn == board.White{
@@ -346,15 +348,12 @@ func UndoMove(b *board.Board) {
 		b.BlackAttacks = resetMap
 	}
 
-	if b.IsCheck && b.Status != board.StatusCheckmate{
-		b.IsCheck = false
-		b.Checks = []*board.Check{}
-	}
-
-	generateAttacksList(b)
-
+	b.IsCheck = false
+	b.Checks = nil
 	b.Ply--
 	b.Turn = -1 * b.Turn
+
+	generateAttacksList(b)
 
 	if b.Turn == board.Black {
 		b.FullMoveClock--
@@ -363,6 +362,4 @@ func UndoMove(b *board.Board) {
 	if b.IsCheck {
 		GenerateMovesList(b)
 	}
-
-	b.PrintBoard()
 }

@@ -34,7 +34,7 @@ func (g *Game) Run(){
 			break
 		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
 			moves.MakeMove(&g.board,m)
-			fmt.Println(g.board.ZobristHash)
+			g.board.PrintBoard()
 		}
 		
 		switch input {
@@ -45,6 +45,8 @@ func (g *Game) Run(){
 			moves.UndoMove(&g.board)
 		case "print":
 			g.board.PrintBoard()
+		case "perft":
+			moves.Perft(moves.Position1FEN,moves.Position1Table)
 		}
 		fmt.Printf("> ")
 	}

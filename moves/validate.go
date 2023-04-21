@@ -2,7 +2,6 @@ package moves
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/logantwalker/gopher-chess/board"
 )
@@ -317,13 +316,11 @@ func psuedoLongRangeAttacks(b *board.Board, origin int8, delta int8){
 				break
 			}
 			if b.State[origin] > 0 && b.State[i] == board.BlackKing{
-				fmt.Println("pin detected")
 				pin := board.Pin{Delta: delta,}
 				b.BlackPins[pinLocation] = pin
 				break
 			}
 			if b.State[origin] < 0 && b.State[i] == board.WhiteKing{
-				fmt.Println("pin detected")
 				pin := board.Pin{Delta: delta,}
 				b.WhitePins[pinLocation] = pin
 				break

@@ -115,17 +115,19 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 		b.FullMoveClock++
 	}
 
-	validMove, err := ValidateUserMove(b, move)
-	if err != nil {
-		invalidMoveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
-		b.PrintBoard()
-		log.Println("legal moves: ")
-		m := GenerateMovesList(b)
-		PrintMoves(m)
-		fmt.Println("board state: ", b.BlackPins)
-		log.Fatalf("%s. move: %s, turn: %d\n", err.Error(), invalidMoveString, b.Turn)
-		return b
-	}
+	// validMove, err := ValidateUserMove(b, move)
+	// if err != nil {
+	// 	invalidMoveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
+	// 	b.PrintBoard()
+	// 	log.Println("legal moves: ")
+	// 	m := GenerateMovesList(b)
+	// 	PrintMoves(m)
+	// 	fmt.Println("board state: ", b.BlackPins)
+	// 	log.Fatalf("%s. move: %s, turn: %d\n", err.Error(), invalidMoveString, b.Turn)
+	// 	return b
+	// }
+
+	validMove := move
 
 	moveRecord := board.MoveRecord{
 		Move: validMove,

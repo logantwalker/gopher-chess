@@ -58,9 +58,9 @@ func perft(depth int, b *board.Board) PerftData {
 	start := time.Now()
 
 	if depth == 0 {
-		if len(moves) == 0 {
-			data.Mates++
-		}
+		// if len(moves) == 0 {
+		// 	data.Mates++
+		// }
 	
 		if b.IsCheck {
 			data.Checks++

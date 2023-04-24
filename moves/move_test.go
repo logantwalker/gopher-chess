@@ -80,10 +80,6 @@ func TestDisappearingBishop(t *testing.T){
 			log.Fatal("we lost the bishop.")
 		}
 		
-		// if move.To == board.H6 && move.From == board.G7{
-		// 	log.Fatal("\nwhat the fuck")
-		// 	t.Error("we are about to fuck up")
-		// }
 		MakeMove(&b, move)
 
 		// if b.State[board.H6] != board.WhiteBishop && move.From != board.G8{

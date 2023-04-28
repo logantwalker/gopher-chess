@@ -32,6 +32,10 @@ func (g *Game) Run() {
 		if in == "quit" || in == "q" {
 			break
 
+		} else if in == "uci" {
+			fmt.Println("id name gopher")
+			fmt.Println("id author loganwalker")
+			fmt.Println("uciok")
 		}else if strings.HasPrefix(in, "position") {
 			// Split the input into words
 			words := strings.Fields(in)

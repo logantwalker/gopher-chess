@@ -11,24 +11,24 @@ var (
 	Position1FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 	Position1Table = []PerftData{
-		PerftData{depth: 0, nodes: 1, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
-		PerftData{depth: 1, nodes: 20, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
-		PerftData{depth: 2, nodes: 400, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
-		PerftData{depth: 3, nodes: 8902, captures: 34, enPassants: 0, castles: 0, promotions: 0, checks: 12, mates: 0},
-		PerftData{depth: 4, nodes: 197281, captures: 1576, enPassants: 0, castles: 0, promotions: 0, checks: 469, mates: 8},
-		PerftData{depth: 5, nodes: 4865609, captures: 82719, enPassants: 258, castles: 0, promotions: 0, checks: 27351, mates: 347},
-		PerftData{depth: 6, nodes: 119060324, captures: 2812008, enPassants: 5248, castles: 0, promotions: 0, checks: 809099, mates: 10828},
+		{depth: 0, nodes: 1, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		{depth: 1, nodes: 20, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		{depth: 2, nodes: 400, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		{depth: 3, nodes: 8902, captures: 34, enPassants: 0, castles: 0, promotions: 0, checks: 12, mates: 0},
+		{depth: 4, nodes: 197281, captures: 1576, enPassants: 0, castles: 0, promotions: 0, checks: 469, mates: 8},
+		{depth: 5, nodes: 4865609, captures: 82719, enPassants: 258, castles: 0, promotions: 0, checks: 27351, mates: 347},
+		{depth: 6, nodes: 119060324, captures: 2812008, enPassants: 5248, castles: 0, promotions: 0, checks: 809099, mates: 10828},
 	}
 
 	Position2FEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -"
 
 	Position2Table = []PerftData{
-		PerftData{depth: 0, nodes: 1},
-		PerftData{depth: 1, nodes: 48, captures: 8, enPassants: 0, castles: 2, promotions: 0, checks: 0, mates: 0},
-		PerftData{depth: 2, nodes: 2039, captures: 351, enPassants: 1, castles: 91, promotions: 0, checks: 3, mates: 0},
-		PerftData{depth: 3, nodes: 97862, captures: 17102, enPassants: 45, castles: 3162, promotions: 0, checks: 993, mates: 1},
-		PerftData{depth: 4, nodes: 4085603, captures: 757163, enPassants: 1929, castles: 128013, promotions: 15172, checks: 25523, mates: 43},
-		PerftData{depth: 5, nodes: 193690690, captures: 35043416, enPassants: 73365, castles: 4993637, promotions: 8392, checks: 3309887, mates: 30171},
+		{depth: 0, nodes: 1},
+		{depth: 1, nodes: 48, captures: 8, enPassants: 0, castles: 2, promotions: 0, checks: 0, mates: 0},
+		{depth: 2, nodes: 2039, captures: 351, enPassants: 1, castles: 91, promotions: 0, checks: 3, mates: 0},
+		{depth: 3, nodes: 97862, captures: 17102, enPassants: 45, castles: 3162, promotions: 0, checks: 993, mates: 1},
+		{depth: 4, nodes: 4085603, captures: 757163, enPassants: 1929, castles: 128013, promotions: 15172, checks: 25523, mates: 43},
+		{depth: 5, nodes: 193690690, captures: 35043416, enPassants: 73365, castles: 4993637, promotions: 8392, checks: 3309887, mates: 30171},
 	}
 )
 

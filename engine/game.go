@@ -32,7 +32,41 @@ func (g *Game) Run() {
 		if in == "quit" || in == "q" {
 			break
 
-		} else if in == "moves" || in == "m" {
+		}else if strings.HasPrefix(in, "position") {
+			// Split the input into words
+			words := strings.Fields(in)
+		
+			// Check if the position command is correctly followed by 'fen' or 'startpos'
+			if len(words) > 1 {
+				if words[1] == "fen" {
+					// The position command is followed by a FEN string.
+					// Join the rest of the words to form the FEN string.
+					fen := strings.Join(words[2:], " ")
+					g.board = NewBoard(fen)
+				} else if words[1] == "startpos" {
+					// The position command is followed by 'startpos', so set the board to the initial position.
+					g.board = NewBoard(defaultFEN)
+		
+					// If there are moves following 'startpos', apply them.
+					if len(words) > 2 && words[2] == "moves" {
+						for _, moveStr := range words[3:] {
+							move, err := createMove(moveStr)
+							if err != nil {
+								fmt.Printf("invalid move: %s\n", moveStr)
+							} else {
+								g.board.MakeMove(move)
+							}
+						}
+					}
+				} else {
+					fmt.Printf("invalid position command\n")
+				}
+			} else {
+				fmt.Printf("invalid position command\n")
+			}
+		} else if in == "isready" {
+			fmt.Println("readyok")
+		}else if in == "moves" || in == "m" {
 			gen := NewGenerator(g.board)
 			printMoves(gen.GenerateMoves())
 
@@ -44,7 +78,7 @@ func (g *Game) Run() {
 		} else if in == "perft2" {
 			Perft(position2FEN, position2Table)
 
-		} else if in == "new" || in == "n" {
+		} else if in == "ucinewgame" || in == "n" {
 			g.board = NewBoard(defaultFEN)
 
 		} else if in == "fen" || in == "f" {

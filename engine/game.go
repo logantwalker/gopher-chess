@@ -27,7 +27,6 @@ func (g *Game) Run() {
 	fmt.Printf("> ")
 
 	for scanner.Scan() {
-		fmt.Println(g.board.blackCastle)
 		in := scanner.Text()
 
 		if in == "quit" || in == "q" {
@@ -37,7 +36,9 @@ func (g *Game) Run() {
 			gen := NewGenerator(g.board)
 			printMoves(gen.GenerateMoves())
 
-		} else if in == "perft" {
+		} else if in == "turn"{
+			fmt.Println(g.board.sideToMove)
+		}else if in == "perft" {
 			Perft(position1FEN, position1Table)
 
 		} else if in == "perft2" {
@@ -61,8 +62,9 @@ func (g *Game) Run() {
 		} else if in == "search" || in == "s" {
 			Search(g.board)
 
-		} else if in == "do" || in == "d" {
-			g.board.MakeMove(Search(g.board))
+		} else if in == "go" || in == "g" {
+			move := Search(g.board)
+			g.board.MakeMove(move)
 			fmt.Printf("%s\n", formatBoard(g.board))
 
 		} else if in == "eval" || in == "e" {

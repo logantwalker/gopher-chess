@@ -1,10 +1,7 @@
 package main
 
-import (
-	"github.com/logantwalker/gopher-chess/game"
-)
+import "github.com/logantwalker/gopher-chess/engine"
 
 func main(){
-	g := game.NewGame()
-	g.Run()
+	engine.NewGame().Run()
 }

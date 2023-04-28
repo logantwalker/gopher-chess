@@ -41,11 +41,14 @@ var (
 	whitePawnStartRank int8 = 1 // rank 2
 	blackPawnStartRank int8 = 6 // rank 7
 
-	whiteKingSideCastlingSquares []board.Square = []board.Square{board.F1,board.G1}
-	whiteQueenSideCastlingSquares []board.Square = []board.Square{board.B1, board.C1, board.D1}
+	whiteShortCastlingSquares []board.Square = []board.Square{board.F1,board.G1}
+	whiteLongCastlingSquares []board.Square = []board.Square{board.B1, board.C1, board.D1}
 
-	blackKingSideCastlingSquares []board.Square = []board.Square{board.F8,board.G8}
-	blackQueenSideCastlingSquares []board.Square = []board.Square{board.B8, board.C8, board.D8}
+	blackShortCastlingSquares []board.Square = []board.Square{board.F8,board.G8}
+	blackLongCastlingSquares []board.Square = []board.Square{board.B8, board.C8, board.D8}
+
+	castleShortDistanceRook int8 = 3
+	castleLongDistanceRook  int8 = 4
 )
 
 // move types
@@ -114,28 +117,8 @@ func PrintMoves(moves []board.Move) {
 } 
 
 func MakeMove(b *board.Board, move board.Move) *board.Board{
-	b.HalfMoveClock++
-
-	if b.Turn == board.Black{
-		b.FullMoveClock++
-	}
-
-	// validMove, err := ValidateUserMove(b, move)
-	// if err != nil {
-	// 	invalidMoveString := board.SquareHexToString[move.From] + board.SquareHexToString[move.To]
-	// 	b.PrintBoard()
-	// 	log.Println("legal moves: ")
-	// 	m := GenerateMovesList(b)
-	// 	PrintMoves(m)
-	// 	fmt.Println("board state: ", b.BlackPins)
-	// 	log.Fatalf("%s. move: %s, turn: %d\n", err.Error(), invalidMoveString, b.Turn)
-	// 	return b
-	// }
-
-	validMove := move
-
 	moveRecord := board.MoveRecord{
-		Move: validMove,
+		Move: move,
 		WhiteCastle: b.WhiteCastle,
 		BlackCastle: b.BlackCastle,
 		EnPassant: b.EnPassant,
@@ -143,36 +126,43 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 		ZobristHash: b.ZobristHash,
 	}
 
+	b.HalfMoveClock++
+	
+	if b.Turn == board.Black{
+		b.FullMoveClock++
+	}
+
 	b.History = append(b.History, moveRecord)
 
-	switch validMove.Type {
+	b.State[move.From] = board.Empty
+	b.State[move.To] = move.MovedPiece
+
+	switch move.Type {
 	case moveOrdinary:
-		b.State[validMove.From] = board.Empty
-		b.State[validMove.To] = validMove.MovedPiece
 		if move.Capture != board.Empty{
 			b.HalfMoveClock = 0
 		}
-		switch validMove.MovedPiece {
+		switch move.MovedPiece {
 		case board.WhiteKing:
-			if validMove.From == board.WhiteKingStartSquare{
+			if move.From == board.WhiteKingStartSquare{
 				b.WhiteCastle = board.CastleNone
 			}
-			b.KingLocations[0] = int8(validMove.To)
+			b.KingLocations[0] = int8(move.To)
 		case board.BlackKing:
-			if validMove.From == board.BlackKingStartSquare{
+			if move.From == board.BlackKingStartSquare{
 				b.BlackCastle = board.CastleNone
 			}
-			b.KingLocations[1] = int8(validMove.To)
+			b.KingLocations[1] = int8(move.To)
 		case board.WhiteRook:
-			if validMove.From == board.WhiteRookStartSquares[0]{
+			if move.From == board.WhiteRookStartSquares[0]{
 				b.WhiteCastle &= ^board.CastleLong
-			}else if validMove.From == board.WhiteRookStartSquares[1]{
+			}else if move.From == board.WhiteRookStartSquares[1]{
 				b.WhiteCastle &= ^board.CastleShort
 			}
 		case board.BlackRook:
-			if validMove.From == board.BlackRookStartSquares[0]{
+			if move.From == board.BlackRookStartSquares[0]{
 				b.BlackCastle &= ^board.CastleLong
-			}else if validMove.From == board.BlackRookStartSquares[1]{
+			}else if move.From == board.BlackRookStartSquares[1]{
 				b.BlackCastle &= ^board.CastleShort
 			}
 		case board.WhitePawn:
@@ -191,16 +181,16 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 			}
 		}
 	case moveEnPassant:
-		switch validMove.MovedPiece {
+		switch move.MovedPiece {
 		case board.WhitePawn:
-			b.State[validMove.From] = board.Empty
-			b.State[validMove.To] = validMove.MovedPiece
+			b.State[move.From] = board.Empty
+			b.State[move.To] = move.MovedPiece
 			b.State[int8(b.EnPassant) - nextRank] = board.Empty
 
 			b.HalfMoveClock = 0
 		case board.BlackPawn:
-			b.State[validMove.From] = board.Empty
-			b.State[validMove.To] = validMove.MovedPiece
+			b.State[move.From] = board.Empty
+			b.State[move.To] = move.MovedPiece
 			b.State[int8(b.EnPassant) + nextRank] = board.Empty
 
 			b.HalfMoveClock = 0
@@ -208,67 +198,45 @@ func MakeMove(b *board.Board, move board.Move) *board.Board{
 
 		b.EnPassant = 0
 	case moveShortCastle:
-		b.State[validMove.From] = board.Empty
-		b.State[validMove.To] = validMove.MovedPiece
 
-		switch validMove.MovedPiece {
+		switch move.MovedPiece {
 		case board.WhiteKing:
 			b.State[board.WhiteRookStartSquares[1]] = board.Empty
-			b.State[int8(validMove.To) - nextFile] = board.WhiteRook
-			b.WhiteCastle &= ^board.CastleShort
-			b.KingLocations[0] = int8(validMove.To)
+			b.State[int8(move.To) - nextFile] = board.WhiteRook
+			b.WhiteCastle = board.CastleNone
+			b.KingLocations[0] = int8(move.To)
 		case board.BlackKing:
 			b.State[board.BlackRookStartSquares[1]] = board.Empty
-			b.State[int8(validMove.To) - nextFile] = board.BlackRook
-			b.BlackCastle &= ^board.CastleShort	
-			b.KingLocations[1] = int8(validMove.To)
+			b.State[int8(move.To) - nextFile] = board.BlackRook
+			b.BlackCastle = board.CastleNone
+			b.KingLocations[1] = int8(move.To)
 		}
 	case moveLongCastle:
-		b.State[validMove.From] = board.Empty
-		b.State[validMove.To] = validMove.MovedPiece
-		switch validMove.MovedPiece {
+
+		switch move.MovedPiece {
 		case board.WhiteKing:
 			b.State[board.WhiteRookStartSquares[0]] = board.Empty
-			b.State[int8(validMove.To) + nextFile] = board.WhiteRook
-			b.WhiteCastle &= ^board.CastleLong
-			b.KingLocations[0] = int8(validMove.To)
+			b.State[int8(move.To) + nextFile] = board.WhiteRook
+			b.WhiteCastle = board.CastleNone
+			b.KingLocations[0] = int8(move.To)
 		case board.BlackKing:	
 			b.State[board.BlackRookStartSquares[0]] = board.Empty
-			b.State[int8(validMove.To) + nextFile] = board.BlackRook
-			b.BlackCastle &= ^board.CastleLong
-			b.KingLocations[1] = int8(validMove.To)
+			b.State[int8(move.To) + nextFile] = board.BlackRook
+			b.BlackCastle = board.CastleNone
+			b.KingLocations[1] = int8(move.To)
 		}
 	case movePromote:
-		b.State[validMove.From] = board.Empty
-		b.State[validMove.To] = validMove.Promotion
+		b.State[move.To] = move.Promotion
 
 		b.HalfMoveClock = 0
 	}
 
-	resetMap := make(map[int8][]int8)
-	if b.Turn == board.White{
-		b.WhiteAttacks = resetMap
-	}else{
-		b.BlackAttacks = resetMap
-	}
-
-	if b.IsCheck && b.Status != board.StatusCheckmate{
-		b.IsCheck = false
-		b.Checks = []*board.Check{}
-	}
-
-	b.UpdateHash(&validMove)
+	b.UpdateHash(&move)
 
 	checkRepititions(b)
 
-	generateAttacksList(b)
-
 	b.Ply ++
 	b.Turn = -1 * b.Turn
-
-	if b.IsCheck {
-		GenerateMovesList(b)
-	}
 
 	return b
 }
@@ -289,84 +257,52 @@ func UndoMove(b *board.Board) {
 	b.HalfMoveClock = moveRecord.HalfMoveClock
 	b.ZobristHash =  moveRecord.ZobristHash
 
-	move := moveRecord.Move
+	m := moveRecord.Move
 
-	switch move.Type {
-	case moveOrdinary:
-		b.State[move.From] = move.MovedPiece
-		b.State[move.To] = move.Capture
-
-		switch move.MovedPiece {
+	switch {
+	case m.Type == moveOrdinary || m.Type == movePromote:
+		b.State[m.To] = m.Capture
+		b.State[m.From] = m.MovedPiece
+		switch m.MovedPiece {
 		case board.WhiteKing:
-			b.KingLocations[0] = int8(move.From)
+			b.KingLocations[0] = int8(m.From)
 		case board.BlackKing:
-			b.KingLocations[1] = int8(move.From)
+			b.KingLocations[1] = int8(m.From)
 		}
-	case moveEnPassant:
-		switch move.MovedPiece {
-		case board.WhitePawn:
-			b.State[move.From] = move.MovedPiece
-			b.State[move.To] = board.Empty
-			b.State[int8(b.EnPassant) - nextRank] = move.Capture
-		case board.BlackPawn:
-			b.State[move.From] = move.MovedPiece
-			b.State[move.To] = board.Empty
-			b.State[int8(b.EnPassant) + nextRank] = move.Capture
-		}
-	case moveShortCastle:
-		b.State[move.From] = move.MovedPiece
-		b.State[move.To] = board.Empty
-
-		switch move.MovedPiece {
+	case m.Type == moveShortCastle:
+		b.State[m.From] = m.MovedPiece
+		b.State[int8(m.From)+castleShortDistanceRook*nextFile] = b.State[int8(m.From)+nextFile]
+		b.State[m.To] = board.Empty
+		b.State[int8(m.From)+nextFile] = board.Empty
+		switch m.MovedPiece {
 		case board.WhiteKing:
-			b.State[board.WhiteRookStartSquares[1]] = board.WhiteRook
-			b.State[int8(move.To) - nextFile] = board.Empty
-			b.KingLocations[0] = int8(move.From)
+			b.KingLocations[0] = int8(m.From)
 		case board.BlackKing:
-			b.State[board.BlackRookStartSquares[1]] = board.BlackRook
-			b.State[int8(move.To) - nextFile] = board.Empty
-			b.KingLocations[1] = int8(move.From)
+			b.KingLocations[1] = int8(m.From)
 		}
-	case moveLongCastle:
-		b.State[move.From] = move.MovedPiece
-		b.State[move.To] = board.Empty
-		switch move.MovedPiece {
+	case m.Type == moveLongCastle:
+		b.State[m.From] = m.MovedPiece
+		b.State[int8(m.From)-castleLongDistanceRook*nextFile] = b.State[int8(m.From)-nextFile]
+		b.State[m.To] = board.Empty
+		b.State[int8(m.From)-nextFile] = board.Empty
+		switch m.MovedPiece {
 		case board.WhiteKing:
-			b.State[board.WhiteRookStartSquares[0]] = board.WhiteRook
-			b.State[int8(move.To) + nextFile] = board.Empty 
-			b.KingLocations[0] = int8(move.From)
-		case board.BlackKing:	
-			b.State[board.BlackRookStartSquares[0]] = board.BlackRook
-			b.State[int8(move.To) + nextFile] = board.Empty 
-			b.KingLocations[1] = int8(move.From)
+			b.KingLocations[0] = int8(m.From)
+		case board.BlackKing:
+			b.KingLocations[1] = int8(m.From)
 		}
-	case movePromote:
-		b.State[move.From] = move.MovedPiece 
-		b.State[move.To] = move.Capture
-	}
-
-	b.WhitePins = map[int8]board.Pin{}
-	b.BlackPins = map[int8]board.Pin{}
-
-	resetMap := make(map[int8][]int8)
-	if b.Turn == board.White{
-		b.WhiteAttacks = resetMap
-	}else{
-		b.BlackAttacks = resetMap
+	case m.Type == moveEnPassant:
+		b.State[m.From] = m.MovedPiece
+		b.State[m.To] = board.Empty
+		b.State[int8(m.To)-m.MovedPiece*nextRank] = m.Capture
 	}
 
 	b.IsCheck = false
-	b.Checks = nil
+	b.Status = board.StatusNormal
 	b.Ply--
 	b.Turn = -1 * b.Turn
 
-	generateAttacksList(b)
-
 	if b.Turn == board.Black {
 		b.FullMoveClock--
-	}
-
-	if b.IsCheck {
-		GenerateMovesList(b)
 	}
 }

@@ -10,7 +10,7 @@ import (
 )
 
 type Game struct{
-	board board.Board
+	board *board.Board
 }
 
 func NewGame() Game {
@@ -18,7 +18,7 @@ func NewGame() Game {
 
 	g := new(Game)
 
-	g.board = b
+	g.board = &b
 
 	return *g
 }
@@ -32,17 +32,24 @@ func (g *Game) Run(){
 
 		if input == "quit" || input == "q"{
 			break
-		}else if  m, err := moves.CreateMoveFromInput(&g.board, input); err == nil{
-			moves.MakeMove(&g.board,m)
+		}else if  m, err := moves.CreateMoveFromInput(g.board, input); err == nil{
+			m, err = moves.ValidateUserMove(g.board, m)
+			if err != nil{
+				fmt.Println("> invalid move")
+			}else{
+				moves.MakeMove(g.board,m)
+			}
+			
 			g.board.PrintBoard()
 		}
 		
 		switch input {
 		case "moves":
-			m := moves.GenerateMovesList(&g.board)
+			mg := moves.NewGenerator(g.board)
+			m := mg.GenerateMoves()
 			moves.PrintMoves(m)
 		case "undo":
-			moves.UndoMove(&g.board)
+			moves.UndoMove(g.board)
 		case "print":
 			g.board.PrintBoard()
 		case "perft":

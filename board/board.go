@@ -21,8 +21,9 @@ var (
 
 	StatusNormal int = 0
 	StatusCheckmate int = 1
-	StatusStalemate int = 2
-	StatusThreeFoldRep int = 3
+	StatusCheck int = 2
+	StatusStalemate int = 3
+	StatusThreeFoldRep int = 4
 )
 
 type Pin struct {
@@ -68,13 +69,8 @@ type Board struct {
 	Turn 			int8
 	WhiteCastle 	int8
 	BlackCastle 	int8
-	WhiteAttacks	map[int8][]int8
-	WhitePins		map[int8]Pin
-	BlackAttacks	map[int8][]int8
-	BlackPins		map[int8]Pin
 	KingLocations	[]int8
 	IsCheck 		bool
-	Checks			[]*Check
 	EnPassant 		Square
 	HalfMoveClock 	int
 	FullMoveClock	int
@@ -89,10 +85,6 @@ func NewBoard(fen string) Board {
 
 	b.KingLocations = append(b.KingLocations,int8(WhiteKingStartSquare))
 	b.KingLocations = append(b.KingLocations,int8(BlackKingStartSquare))
-	b.WhiteAttacks = map[int8][]int8{}
-	b.WhitePins = map[int8]Pin{}
-	b.BlackAttacks = map[int8][]int8{}
-	b.BlackPins = map[int8]Pin{}
 	b.ZobristTable = InitZobristTable()
 	b.GenerateHash()
 
@@ -200,6 +192,16 @@ func LegalSquare(square int8) bool {
 	return !(uint8(square)&0x88 != 0)
 }
 
+func (b *Board) IsEmpty(squares ...Square) bool{
+	for _, sq := range squares {
+		if b.State[sq] != Empty{
+			return false
+		}
+	}
+
+	return true
+}
+
 func (b *Board) PrintBoard(){
 	for i := 0x70; i >= 0x00; i -= 0x10 {
 		for j := 0; j < 8; j++ {
@@ -262,6 +264,8 @@ func (b* Board) UpdateHash(m *Move){
 	}
 
 	piece = piece - 1
+
+	// fmt.Println(b.ZobristTable.pieceKeys)
 
 	key ^= b.ZobristTable.pieceKeys[piece][side][int8(m.From)]
 	key ^= b.ZobristTable.pieceKeys[piece][side][int8(m.To)]

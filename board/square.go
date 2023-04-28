@@ -107,3 +107,11 @@ var HexBoard = []int8{
 func Rank(square int8) int8{
 	return square >> 4
 }
+
+func File(square int8) int8 {
+	return square & 7
+}
+
+func SquareRF(rank int8, file int8) int8 {
+	return (rank << 4) | file
+}

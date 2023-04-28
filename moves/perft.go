@@ -7,43 +7,45 @@ import (
 	"github.com/logantwalker/gopher-chess/board"
 )
 
-type PerftData struct {
-	Depth      int
-	Nodes      int64
-	Captures   int64
-	EnPassants int64
-	Castles    int64
-	Promotions int64
-	Checks     int64
-	Mates      int64
-	Elapsed    time.Duration
-}
-
 var (
 	Position1FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 	Position1Table = []PerftData{
-		{Depth: 0, Nodes: 1, Captures: 0, EnPassants: 0, Castles: 0, Promotions: 0, Checks: 0, Mates: 0},
-		{Depth: 1, Nodes: 20, Captures: 0, EnPassants: 0, Castles: 0, Promotions: 0, Checks: 0, Mates: 0},
-		{Depth: 2, Nodes: 400, Captures: 0, EnPassants: 0, Castles: 0, Promotions: 0, Checks: 0, Mates: 0},
-		{Depth: 3, Nodes: 8902, Captures: 34, EnPassants: 0, Castles: 0, Promotions: 0, Checks: 12, Mates: 0},
-		{Depth: 4, Nodes: 197281, Captures: 1576, EnPassants: 0, Castles: 0, Promotions: 0, Checks: 469, Mates: 8},
-		{Depth: 5, Nodes: 4865609, Captures: 82719, EnPassants: 258, Castles: 0, Promotions: 0, Checks: 27351, Mates: 347},
-		{Depth: 6, Nodes: 119060324, Captures: 2812008, EnPassants: 5248, Castles: 0, Promotions: 0, Checks: 809099, Mates: 10828},
+		PerftData{depth: 0, nodes: 1, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		PerftData{depth: 1, nodes: 20, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		PerftData{depth: 2, nodes: 400, captures: 0, enPassants: 0, castles: 0, promotions: 0, checks: 0, mates: 0},
+		PerftData{depth: 3, nodes: 8902, captures: 34, enPassants: 0, castles: 0, promotions: 0, checks: 12, mates: 0},
+		PerftData{depth: 4, nodes: 197281, captures: 1576, enPassants: 0, castles: 0, promotions: 0, checks: 469, mates: 8},
+		PerftData{depth: 5, nodes: 4865609, captures: 82719, enPassants: 258, castles: 0, promotions: 0, checks: 27351, mates: 347},
+		PerftData{depth: 6, nodes: 119060324, captures: 2812008, enPassants: 5248, castles: 0, promotions: 0, checks: 809099, mates: 10828},
 	}
 
 	Position2FEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -"
 
 	Position2Table = []PerftData{
-		{Depth: 0, Nodes: 1},
-		{Depth: 1, Nodes: 48, Captures: 8, EnPassants: 0, Castles: 2, Promotions: 0, Checks: 0, Mates: 0},
-		{Depth: 2, Nodes: 2039, Captures: 351, EnPassants: 1, Castles: 91, Promotions: 0, Checks: 3, Mates: 0},
-		{Depth: 3, Nodes: 97862, Captures: 17102, EnPassants: 45, Castles: 3162, Promotions: 0, Checks: 993, Mates: 1},
-		{Depth: 4, Nodes: 4085603, Captures: 757163, EnPassants: 1929, Castles: 128013, Promotions: 15172, Checks: 25523, Mates: 43},
-		{Depth: 5, Nodes: 193690690, Captures: 35043416, EnPassants: 73365, Castles: 4993637, Promotions: 8392, Checks: 3309887, Mates: 30171},
+		PerftData{depth: 0, nodes: 1},
+		PerftData{depth: 1, nodes: 48, captures: 8, enPassants: 0, castles: 2, promotions: 0, checks: 0, mates: 0},
+		PerftData{depth: 2, nodes: 2039, captures: 351, enPassants: 1, castles: 91, promotions: 0, checks: 3, mates: 0},
+		PerftData{depth: 3, nodes: 97862, captures: 17102, enPassants: 45, castles: 3162, promotions: 0, checks: 993, mates: 1},
+		PerftData{depth: 4, nodes: 4085603, captures: 757163, enPassants: 1929, castles: 128013, promotions: 15172, checks: 25523, mates: 43},
+		PerftData{depth: 5, nodes: 193690690, captures: 35043416, enPassants: 73365, castles: 4993637, promotions: 8392, checks: 3309887, mates: 30171},
 	}
 )
 
+// PerftData aggregates performance test data in a structure
+type PerftData struct {
+	depth      int
+	nodes      int64
+	captures   int64
+	enPassants int64
+	castles    int64
+	promotions int64
+	checks     int64
+	mates      int64
+	elapsed    time.Duration
+}
+
+// Perft runs a performance test against a given FEN and expected results
 func Perft(fen string, expected []PerftData) {
 	b := board.NewBoard(fen)
 	printPerftData(&b, expected)
@@ -51,108 +53,100 @@ func Perft(fen string, expected []PerftData) {
 
 func perft(depth int, b *board.Board) PerftData {
 
-	data := PerftData{Depth: depth}
-
-	moves := GenerateMovesList(b)
+	data := PerftData{depth: depth}
+	generator := NewGenerator(b)
 
 	start := time.Now()
 
 	if depth == 0 {
-		// if len(moves) == 0 {
-		// 	data.Mates++
-		// }
-	
-		if b.IsCheck {
-			data.Checks++
-		}
-		data.Depth = 0
-		data.Nodes = 1
+		data.depth = 0
+		data.nodes = 1
 		return data
 	}
 
-	
+	moves := generator.GenerateMoves()
+
+	if len(moves) == 0 {
+		data.mates++
+	}
+
+	if generator.IsCheck {
+		data.checks++
+	}
 
 	for _, move := range moves {
+		MakeMove(b, move)
+
+		res := perft(depth-1, b)
+		data.nodes += res.nodes
+		data.captures += res.captures
+		data.enPassants += res.enPassants
+		data.castles += res.castles
+		data.promotions += res.promotions
+		data.checks += res.checks
+		data.mates += res.mates
+
 		switch move.Type {
 		case moveShortCastle:
-			data.Castles++
+			data.castles++
 		case moveLongCastle:
-			data.Castles++
+			data.castles++
 		case movePromote:
-			data.Promotions++
+			data.promotions++
 		case moveEnPassant:
-			data.EnPassants++
+			data.enPassants++
 		}
 
 		if move.Capture != board.Empty {
-			data.Captures++
+			data.captures++
 		}
-
-		if b.IsCheck {
-			data.Checks++
-		}
-
-		MakeMove(b, move)
-		res := perft(depth-1, b)
-		UndoMove(b)
-
-		data.Nodes += res.Nodes
-		data.Captures += res.Captures
-		data.EnPassants += res.EnPassants
-		data.Castles += res.Castles
-		data.Promotions += res.Promotions
-		data.Checks += res.Checks
-		data.Mates += res.Mates
 
 		switch b.Status {
 		case board.StatusCheckmate:
-			data.Mates++
+			data.mates++
+		case board.StatusCheck:
+			data.checks++
 		}
+
+		UndoMove(b)
 	}
 
-	data.Elapsed = time.Since(start)
+	data.elapsed = time.Since(start)
 
 	return data
 }
 
-func printPerftData(board *board.Board, expected []PerftData) {
+func printPerftData(b *board.Board, expected []PerftData) {
+	
 
-	fmt.Printf("D   Nodes    Capt.   E.p.   Cast.   Prom.  Checks   Mates   Time\n")
+	fmt.Printf(("D   Nodes    Capt.   E.p.   Cast.   Prom.  Checks   Mates   Time\n"))
 	for i := 0; i < len(expected); i++ {
 
-		res := perft(i, board)
+		res := perft(i, b)
 
 		fmt.Printf("%d %7s %7s %7s %7s %7s %7s %7s  %5ss\n",
 			i,
-			formatNodesCount(res.Nodes),
-			formatNodesCount(res.Captures),
-			formatNodesCount(res.EnPassants),
-			formatNodesCount(res.Castles),
-			formatNodesCount(res.Promotions),
-			formatNodesCount(res.Checks),
-			formatNodesCount(res.Mates),
-			formatDuration(res.Elapsed),
+			formatNodesCount(res.nodes),
+			formatNodesCount(res.captures),
+			formatNodesCount(res.enPassants),
+			formatNodesCount(res.castles),
+			formatNodesCount(res.promotions),
+			formatNodesCount(res.checks),
+			formatNodesCount(res.mates),
+			formatDuration(res.elapsed),
 		)
 
 		fmt.Printf("  %s %s %s %s %s %s %s\n\n",
-			formatPerftEntry(res.Nodes, expected[i].Nodes),
-			formatPerftEntry(res.Captures, expected[i].Captures),
-			formatPerftEntry(res.EnPassants, expected[i].EnPassants),
-			formatPerftEntry(res.Castles, expected[i].Castles),
-			formatPerftEntry(res.Promotions, expected[i].Promotions),
-			formatPerftEntry(res.Checks, expected[i].Checks),
-			formatPerftEntry(res.Mates, expected[i].Mates))
+			formatPerftEntry(res.nodes, expected[i].nodes),
+			formatPerftEntry(res.captures, expected[i].captures),
+			formatPerftEntry(res.enPassants, expected[i].enPassants),
+			formatPerftEntry(res.castles, expected[i].castles),
+			formatPerftEntry(res.promotions, expected[i].promotions),
+			formatPerftEntry(res.checks, expected[i].checks),
+			formatPerftEntry(res.mates, expected[i].mates))
 
 	}
 
-}
-func formatNodesCount(nodes int64) string {
-	if nodes < 1000 && nodes > -1000 {
-		return fmt.Sprintf("%d", nodes)
-	} else if nodes < 1000000 && nodes > -1000000 {
-		return fmt.Sprintf("%.1fK", float64(nodes)/1000)
-	}
-	return fmt.Sprintf("%.2fM", float64(nodes)/1000000)
 }
 
 func formatPerftEntry(actual, expected int64) string {
@@ -160,12 +154,22 @@ func formatPerftEntry(actual, expected int64) string {
 	diff := actual - expected
 
 	if diff != 0 {
-		return formatNodesCount(diff)
+		return fmt.Sprintf("%7s", formatNodesCount(diff))
 	}
 
-	return "      0"
+	return fmt.Sprint("      0")
 }
 
 func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.2f", float64(d)*float64(1e-9))
+}
+
+
+func formatNodesCount(nodes int64) string {
+	if nodes < 1000 && nodes > -1000 {
+		return fmt.Sprintf("%d", nodes)
+	} else if nodes < 1000000 && nodes > -1000000 {
+		return fmt.Sprintf("%.1fK", float64(nodes)/1000)
+	}
+	return fmt.Sprintf("%.2fM", float64(nodes)/1000000)
 }

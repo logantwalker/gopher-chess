@@ -101,3 +101,13 @@ func contains(moves []Move, move Move) bool {
 
 	return false
 }
+
+
+// bugged fens for later testing
+
+// 1.) 23. Qf4 qf2+ 24. Qxf2 bxf2+ 
+// - engine says 24. Qxf2 is illegal
+//  ------------------------ 1 ------------------------ //
+// r3r2k/p1p3pp/2p5/8/1P1b1Q2/4q1P1/P4R1P/6K1 b - - 2 23
+// r3r2k/p1p3pp/2p5/8/1P1b1Q2/6P1/P4q1P/6K1 w - - 0 24
+//  ------------------------ 1 ------------------------ //

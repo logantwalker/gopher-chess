@@ -4,7 +4,7 @@ import "time"
 
 var (
 	searchVerbose = true
-	searchMaxTime = 16 * time.Second
+	searchMaxTime = 15 * time.Second
 )
 
 const (
@@ -40,7 +40,7 @@ func Search(board *Board) Move {
 	*pv.board = *board
 	pv.board.ply = 0
 
-	printSearchHead()
+	// printSearchHead()
 
 	foundMate := false
 	depth := 1
@@ -53,7 +53,7 @@ func Search(board *Board) Move {
 		pv.bestMovesPlys[depth] = pv.pathLength[0]
 		pv.bestScores[depth] = score
 
-		printSearchLevel(&pv, depth, score, startTime)
+		// printSearchLevel(&pv, depth, score, startTime)
 
 		if score >= scoreMate || score <= -scoreMate {
 			foundMate = true
@@ -74,7 +74,7 @@ func Search(board *Board) Move {
 		best = pv.bestMoves[depth-1]
 	}
 
-	printSearchResult(&pv, startTime)
+	// printSearchResult(&pv, startTime)
 
 	return best
 }

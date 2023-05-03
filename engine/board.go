@@ -273,7 +273,6 @@ func (b *Board) updateHash(m Move) {
 		color = 1
 	}
 	piece := abs(m.MovedPiece) - 1
-
 	key ^= b.zobristTable.hashPieces[piece][color][int8(m.From)]
 	key ^= b.zobristTable.hashPieces[piece][color][int8(m.To)]
 

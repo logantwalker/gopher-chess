@@ -24,7 +24,6 @@ func NewGame() *Game {
 func (g *Game) Run() {
 
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Printf("> ")
 
 	for scanner.Scan() {
 		in := scanner.Text()
@@ -36,7 +35,23 @@ func (g *Game) Run() {
 			fmt.Println("id name gopher")
 			fmt.Println("id author loganwalker")
 			fmt.Println("uciok")
-		}else if strings.HasPrefix(in, "position") {
+		}else if strings.HasPrefix(in, "setoption"){
+			words := strings.Fields(in)
+			if len(words) > 1 {
+				if words[1] == "name" {
+					option := strings.Join(words[2:3], " ")
+					if option == "Move Overhead"{
+						value := words[5]
+						fmt.Println("move overhead: ",value)
+					}
+				} else {
+					fmt.Printf("invalid position command\n")
+				}
+			} else {
+				fmt.Printf("invalid uci command\n")
+			}
+
+		} else if strings.HasPrefix(in, "position") {
 			// Split the input into words
 			words := strings.Fields(in)
 		
@@ -53,12 +68,26 @@ func (g *Game) Run() {
 		
 					// If there are moves following 'startpos', apply them.
 					if len(words) > 2 && words[2] == "moves" {
+						g.board = NewBoard(defaultFEN)
 						for _, moveStr := range words[3:] {
-							move, err := createMove(moveStr)
-							if err != nil {
-								fmt.Printf("invalid move: %s\n", moveStr)
-							} else {
-								g.board.MakeMove(move)
+							if m, err := createMove(moveStr); err == nil {
+								gen := NewGenerator(g.board)
+								moves := gen.GenerateMoves()
+					
+								found := Move{From: Invalid}
+					
+								for _, move := range moves {
+									if move.From == m.From && move.To == m.To {
+										found = move
+										break
+									}
+								}
+								if found.From != Invalid {
+									g.board.MakeMove(found)
+								} else {
+									fmt.Printf("illegal move\n")
+								}
+					
 							}
 						}
 					}
@@ -83,6 +112,7 @@ func (g *Game) Run() {
 			Perft(position2FEN, position2Table)
 
 		} else if in == "ucinewgame" || in == "n" {
+			g := new(Game)
 			g.board = NewBoard(defaultFEN)
 
 		} else if in == "fen" || in == "f" {
@@ -100,10 +130,11 @@ func (g *Game) Run() {
 		} else if in == "search" || in == "s" {
 			Search(g.board)
 
-		} else if in == "go" || in == "g" {
+		} else if strings.HasPrefix(in, "go") || in == "g" {
 			move := Search(g.board)
+			stringMove := SquareMap[move.From] + SquareMap[move.To]
+			fmt.Println("bestmove ", stringMove)
 			g.board.MakeMove(move)
-			fmt.Printf("%s\n", formatBoard(g.board))
 
 		} else if in == "eval" || in == "e" {
 			fmt.Printf("Score: %d\n", Evaluate(g.board))
@@ -134,10 +165,6 @@ func (g *Game) Run() {
 				fmt.Printf("illegal move\n")
 			}
 
-		} else {
-			fmt.Printf("invalid input\n")
 		}
-
-		fmt.Printf("> ")
 	}
 }

@@ -8,12 +8,12 @@ You can check out some of the games it has played [here](https://lichess.org/@/g
 
 ## Installation
 
-\```
+```
 git clone <repository_url>
 cd <repository_directory>
 go mod download
 go mod tidy
-\```
+```
 
 ## Usage
 

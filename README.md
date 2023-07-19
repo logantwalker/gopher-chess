@@ -8,12 +8,12 @@ You can check out some of the games it has played [here](https://lichess.org/@/g
 
 ## Installation
 
-\```
+```bash
 git clone <repository_url>
 cd <repository_directory>
 go mod download
 go mod tidy
-\```
+```
 
 ## Usage
 
@@ -48,7 +48,7 @@ You can interact with Gopher Chess by running the gopher.go file in your termina
 
 ### Example Game
 
-\```bash
+```bash
 go run gopher.go
 e2e4
 making move
@@ -65,7 +65,7 @@ a  b  c  d  e  f  g  h
 2  ♟  ♟  ♟  ♟  .  ♟  ♟  ♟  
 1  ♜  ♞  ♝  ♛  ♚  ♝  ♞  ♜  
 a  b  c  d  e  f  g  h       d7d5
-\```
+```
 
 ### Online Play
 

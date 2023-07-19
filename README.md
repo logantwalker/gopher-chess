@@ -66,7 +66,7 @@ a  b  c  d  e  f  g  h
 1  ♜  ♞  ♝  ♛  ♚  ♝  ♞  ♜  
 a  b  c  d  e  f  g  h       d7d5
 ```
-
+note: the chesspieces may seem to have inverted colors if you play with a white background terminal. This is because the chesspieces are represented by unicode characters that are white in color.
 ### Online Play
 
 Gopher Chess can be integrated with the Lichess API, enabling it to compete against other players and bots online. 

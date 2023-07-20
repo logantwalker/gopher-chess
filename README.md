@@ -5,7 +5,7 @@
 
 Gopher Chess is an advanced Chess Engine developed in Golang, achieving a competitive ELO rating of 1950 on the Lichess platform. The engine uses a 0x88 board representation and incorporates a number of advanced algorithms and techniques such as iterative deepening, Principal Variation Search, Quiescence Search, and Check Extensions for optimal gameplay. Evaluation techniques include Material Balance, Piece-Square Tables, and Doubled Pawn, improving the engine's decision-making process.
 
-You can check out some of the games it has played [here](https://lichess.org/@/gopher307/search?perf=6).
+You can check out some of the games it has played [here](https://lichess.org/@/gopher307).
 
 [You can play against the engine without downloading the project by clicking here.](https://gopher-frontend-nq3ygk4l7a-uc.a.run.app)
 

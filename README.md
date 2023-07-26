@@ -73,7 +73,3 @@ note: the chesspieces may seem to have inverted colors if you play with a white 
 ### Online Play
 
 Gopher Chess can be integrated with the Lichess API, enabling it to compete against other players and bots online. 
-
-## Contact
-
-For any inquiries, please reach out to the author at [author email].
